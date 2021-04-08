@@ -1,0 +1,39 @@
+name: k_debug_tools_web
+description: Web tools for KDebugTools.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  uuid: ^2.2.2
+  cupertino_icons: ^1.0.2
+  http: ^0.12.2
+  oktoast: ^2.3.2
+  intl: ^0.16.1
+  rxdart: ^0.25.0
+  web_socket_channel: ^1.2.0
+  event_bus: ^1.1.1
+  cached_network_image: ^2.5.0
+  #video player
+  chewie: ^0.12.1+1
+  video_player: ^1.0.1
+  video_player_web: ^0.1.4+1
+  pin_code_fields: ^6.1.0
+  shared_preferences: ^0.5.12+4
+  shared_preferences_web: ^0.1.0
+  visibility_detector: ^0.1.5
+  provider: ^4.3.2+2
+  firebase_analytics: ^7.0.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+flutter:
+  uses-material-design: true
