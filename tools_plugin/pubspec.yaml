@@ -1,6 +1,6 @@
 name: k_debug_tools
 description: Tools for debug flutter app.
-version: 1.0.1
+version: 1.0.1+1
 homepage: https://github.com/KwaiAppTeam/KDebugTools
 level: utility
 publish_to: 'https://pub.dev'
