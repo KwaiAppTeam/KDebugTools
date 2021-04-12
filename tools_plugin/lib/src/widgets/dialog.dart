@@ -17,6 +17,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../k_debug_tools.dart';
+
 ///显示菜单对话框 类似右键菜单, Future返回选中的第x项, null没选中
 Future<int> showContextMenuDialog(
   BuildContext ctx,
@@ -88,13 +90,13 @@ Future<String> showInputDialog(BuildContext ctx,
                 onPressed: () {
                   Navigator.pop(context, _editingController.text);
                 },
-                child: Text('确定'),
+                child: Text(localizationOptions.dialogConfirm),
               ),
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('取消'),
+                child: Text(localizationOptions.dialogCancel),
               ),
             ],
           ));

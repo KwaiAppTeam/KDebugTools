@@ -35,6 +35,16 @@ dependencies:
 Debugger.instance.showDebugger(context)
 ```
 
+## 本地化配置
+
+```dart
+setLocalizationOptions(LocalizationOptions.buildEnOptions())
+```
+or
+```dart
+setLocalizationOptions(LocalizationOptions.buildZhOptions())
+```
+
 ## App构建信息
 
 工具默认会读取变量变量*BUILD_TIME*、*GIT_BRANCH*、*GIT_COMMIT*、*JENKINS_BUILD_ID*

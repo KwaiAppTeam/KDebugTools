@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:k_debug_tools/src/widgets/dialog.dart';
 
+import '../../k_debug_tools.dart';
 import 'common_widgets.dart';
 import 'toast.dart';
 
@@ -45,7 +46,7 @@ class SimpleListInfoWidget extends StatelessWidget {
       onDoubleTap: () {
         if (canCopy) {
           Clipboard.setData(ClipboardData(text: value)).then((v) {
-            Toast.showToast('已复制到剪切板\n\n$value');
+            Toast.showToast('${localizationOptions.copied} \n$value');
           });
         }
       },

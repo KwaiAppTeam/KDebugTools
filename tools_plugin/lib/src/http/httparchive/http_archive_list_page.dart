@@ -22,6 +22,7 @@ import 'package:k_debug_tools/src/http/httphook/http_throttle_controller.dart';
 import 'package:k_debug_tools/src/widgets/toast.dart';
 import 'package:k_debug_tools/src/widgets/transparent_route.dart';
 
+import '../../../k_debug_tools.dart';
 import '../http_models.dart';
 import 'http_archive_detail_page.dart';
 
@@ -53,7 +54,8 @@ class _HttpArchiveListPageState extends State<HttpArchiveListPage> {
   Widget build(BuildContext context) {
     var _archives = HttpHookController.instance.httpArchives.reversed;
     int hookConfigCount = HttpHookController.instance.hookConfigs.length;
-    var summary = '$hookConfigCount 配置 / ${_archives.length} 请求记录';
+    var summary =
+        '$hookConfigCount ${localizationOptions.rules} / ${_archives.length} ${localizationOptions.records}';
     var filteredArchives = _archives.where((element) {
       var urlFilter = _urlFilter.toLowerCase();
       var methodFilter = _methodFilter?.toLowerCase() ?? '';

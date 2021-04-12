@@ -171,7 +171,7 @@ class _DebugDialogState extends State<DebugDialogWidget>
                         children: [
                           Row(
                             children: [
-                              Text('Web服务', style: TextStyle(fontSize: 16)),
+                              Text(localizationOptions.webServer, style: TextStyle(fontSize: 16)),
                               SizedBox(width: 8),
                               Visibility(
                                   visible: started,

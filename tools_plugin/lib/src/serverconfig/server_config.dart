@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../k_debug_tools.dart';
 import '../widgets/list_widgets.dart';
 
 class ServerEnv {
@@ -37,7 +38,7 @@ class ServerEnv {
   ServerEnvConfig get config => _config;
   ServerEnvConfig _config;
 
-  String get envName => config.name ?? '未设置';
+  String get envName => config.name ?? localizationOptions.unconfigured;
 
   int get envIndex => config?.index ?? 0;
 
@@ -141,7 +142,7 @@ class _ServerEnvConfigPageState extends State<ServerEnvConfigPage> {
       names.add(e.name);
     });
     result.add(SimpleListSelectWidget(
-      label: '配置',
+      label: localizationOptions.config,
       valueGetter: () {
         return ServerEnv.instance.envIndex;
       },

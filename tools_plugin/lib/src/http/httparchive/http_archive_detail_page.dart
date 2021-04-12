@@ -62,7 +62,7 @@ class _HttpArchiveDetailPageState extends State<HttpArchiveDetailPage>
           child: Column(
             children: <Widget>[
               NavBar(
-                title: '请求详情',
+                title: localizationOptions.requestDetail,
                 onBack: () {
                   Navigator.pop(context);
                 },

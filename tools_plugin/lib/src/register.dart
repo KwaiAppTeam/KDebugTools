@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../k_debug_tools.dart';
 import 'debugger.dart';
 import 'http/network_debugger.dart';
 import 'http/httphook/http_hook_controller.dart';
@@ -33,10 +34,10 @@ class DebuggerRegister {
 
   final Map<String, ToolPageRoute> _toolRoutes = Map<String, ToolPageRoute>();
   final List<ToolsGroup> _groups = [
-    ToolsGroup(title: '基本信息', toolWidgetBuilder: []),
-    ToolsGroup(title: '常用工具', toolWidgetBuilder: []),
-    ToolsGroup(title: '联调调试', toolWidgetBuilder: []),
-    ToolsGroup(title: '其他工具', toolWidgetBuilder: []),
+    ToolsGroup(title: localizationOptions.basicInfo, toolWidgetBuilder: []),
+    ToolsGroup(title: localizationOptions.commonTools, toolWidgetBuilder: []),
+    ToolsGroup(title: localizationOptions.debugTools, toolWidgetBuilder: []),
+    ToolsGroup(title: localizationOptions.otherTools, toolWidgetBuilder: []),
   ];
 
   List<ToolsGroup> get groups => List.from(_groups);
@@ -82,7 +83,7 @@ class DebuggerRegister {
 
   void _registerRoute() {
     _toolRoutes['http_hook'] = ToolPageRoute(
-        name: '网络抓包',
+        name: localizationOptions.httpRequest,
         pageBuilder: (BuildContext ctx) {
           return HttpArchiveListPage();
         });
@@ -90,14 +91,14 @@ class DebuggerRegister {
 
   void _registerItem() {
     registerItemToInfoGroup((ctx) => SimpleToolItemWidget(
-        name: 'App信息',
+        name: localizationOptions.appInfo,
         icon: Icons.widgets,
         pageBuilder: (BuildContext ctx) {
           return AppInfoPage();
         }));
 
     registerItemToInfoGroup((ctx) => SimpleToolItemWidget(
-        name: '设备信息',
+        name: localizationOptions.deviceInfo,
         icon: Icons.phone_iphone,
         pageBuilder: (BuildContext ctx) {
           return DeviceInfoPage();
@@ -107,7 +108,7 @@ class DebuggerRegister {
       ValueNotifier<bool> showDebugger =
           ValueNotifier(Debugger.instance.isFloatingDebuggerShowing());
       return ToggleToolItemWidget(
-        name: '悬浮按钮',
+        name: localizationOptions.floatButton,
         icon: Icons.bug_report,
         value: showDebugger,
         onChanged: (v) {
@@ -122,7 +123,7 @@ class DebuggerRegister {
     });
 
     registerItemToKitGroup((ctx) => SimpleToolItemWidget(
-        name: '文件浏览',
+        name: localizationOptions.fileExplorer,
         icon: Icons.folder_open,
         pageBuilder: (BuildContext ctx) {
           return FileExplorerPage();
@@ -132,7 +133,7 @@ class DebuggerRegister {
       ValueNotifier<bool> showPerformanceOverlay =
           ValueNotifier(WidgetsApp.showPerformanceOverlayOverride);
       return ToggleToolItemWidget(
-        name: '性能监控',
+        name: localizationOptions.performanceToggle,
         icon: Icons.flash_on,
         value: showPerformanceOverlay,
         onChanged: (v) {
@@ -152,7 +153,7 @@ class DebuggerRegister {
 
     if (ServerEnv.instance.hasConfig()) {
       registerItemToDebuggingGroup((ctx) => SimpleToolItemWidget(
-          name: '服务器配置',
+          name: localizationOptions.serverConfig,
           icon: Icons.phonelink,
           summary: ServerEnv.instance.envName,
           pageBuilder: (BuildContext ctx) {
@@ -161,7 +162,7 @@ class DebuggerRegister {
     }
 
     registerItemToDebuggingGroup((ctx) => ToggleToolItemWidget(
-          name: '网络抓包',
+          name: localizationOptions.httpRequest,
           icon: Icons.network_check,
           value: HttpHookController.instance.enableHook,
           onChanged: (v) {
@@ -173,7 +174,7 @@ class DebuggerRegister {
         ));
 
     registerItemToDebuggingGroup((ctx) => ToggleToolItemWidget(
-          name: '网络代理',
+          name: localizationOptions.httpProxy,
           icon: Icons.settings_ethernet,
           value: NetworkDebugger.instance.enableProxy,
           onChanged: (v) {

@@ -21,6 +21,7 @@ import 'package:k_debug_tools/src/http/httphook/http_hook_controller.dart';
 import 'package:k_debug_tools/src/logwatcher/log_watcher_controller.dart';
 import 'package:k_debug_tools/src/webserver/web_server.dart';
 
+import 'model/localization_options.dart';
 import 'serverconfig/server_config_models.dart';
 import 'register.dart';
 import 'widgets/main_dialog.dart';
@@ -39,7 +40,9 @@ class Debugger {
 
   static final Debugger instance = Debugger._privateConstructor();
 
-  var _debuggerOverlay;
+
+
+  OverlayEntry _debuggerOverlay;
 
   String _title;
 
@@ -51,6 +54,8 @@ class Debugger {
   GlobalKey _rootRepaintBoundaryKey;
 
   GlobalKey get rootRepaintBoundaryKey => _rootRepaintBoundaryKey;
+
+
 
   ///添加到root显示的自定义文件夹name-absolute
   final Map<String, String> _customRootDirs = Map<String, String>();

@@ -69,7 +69,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
                   child: Container(
                       alignment: Alignment.center,
                       height: 36,
-                      child: Text('返回上级')),
+                      child: Text(localizationOptions.parentDir)),
                 ),
                 GestureDetector(
                     behavior: HitTestBehavior.opaque,
@@ -81,7 +81,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
                       child: Container(
                         alignment: Alignment.center,
                         height: 36,
-                        child: Text('刷新'),
+                        child: Text(localizationOptions.refresh),
                       ),
                     )),
               ],
@@ -148,7 +148,9 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
   void _onLongPress(FileModel f) {
     if (!f.readOnly) {
       //弹出上下文菜单
-      showContextMenuDialog(context, <String>['打开', '重命名', '删除'], title: f.name)
+      showContextMenuDialog(context, <String>[localizationOptions.fileOpen,
+        localizationOptions.fileRename,
+        localizationOptions.fileDelete], title: f.name)
           .then((index) {
         if (index != null) {
           debugPrint('ContextMenu $index clicked');
@@ -159,7 +161,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
             case 1:
               //弹出重命名对话框
               showInputDialog(context,
-                      title: '重命名 ${f.name}', initValue: f.name)
+                      title: '${localizationOptions.fileRename} ${f.name}', initValue: f.name)
                   .then((str) {
                 debugPrint('Rename input $str');
                 if (str != null && str.isNotEmpty && f.name != str) {
@@ -189,7 +191,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
                 File(f.absolute).deleteSync(recursive: true);
               }
               _reloadCurrentSubs();
-              Toast.showToast('删除成功');
+              Toast.showToast(localizationOptions.fileDeleteSuccess);
               break;
           }
         }
