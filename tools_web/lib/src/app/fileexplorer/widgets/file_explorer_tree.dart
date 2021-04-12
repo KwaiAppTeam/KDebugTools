@@ -19,6 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:k_debug_tools_web/src/app/fileexplorer/file_explorer_bloc.dart';
 import 'package:k_debug_tools_web/src/app/fileexplorer/file_explorer_models.dart';
 import 'package:k_debug_tools_web/src/widgets/tree.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../app_window_bloc.dart';
 import '../../../bloc_provider.dart';
@@ -63,7 +64,7 @@ class _FileTreeWidgetState extends State<FileTreeWidget> {
                 _fileBloc.loadDir(n.data).then((value) {
                   setState(() {});
                 }).catchError((e) {
-                  _windowBloc.toast('加载失败 $e');
+                  _windowBloc.toast(AppLocalizations.of(context).requestError(e));
                 });
               } else {
                 setState(() {});
@@ -94,7 +95,7 @@ class _FileTreeWidgetState extends State<FileTreeWidget> {
       _root.label = 'Directories';
       _root.expandable = true;
       _root.expanded = true;
-      _root.subs = List<Node>();
+      _root.subs = <Node>[];
     }
 
     _root.data = rootDir;
@@ -105,7 +106,7 @@ class _FileTreeWidgetState extends State<FileTreeWidget> {
         rootDir.subFiles.isEmpty) {
       //清空旧数据
       debugPrint('clear nodes');
-      _root.subs = List<Node>();
+      _root.subs = <Node>[];
 
       _allNodes.clear();
     } else {

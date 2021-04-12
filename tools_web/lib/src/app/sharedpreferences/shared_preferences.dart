@@ -16,9 +16,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/app_window_bloc.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
-
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'shared_preferences_bloc.dart';
 import 'shared_preferences_models.dart';
@@ -99,13 +99,13 @@ class _SharedPreferencesWidgetState extends State<SharedPreferencesWidget> {
         children: <Widget>[
           ActionIcon(
             Icons.refresh,
-            tooltip: 'Refresh',
+            tooltip: AppLocalizations.of(context).refresh,
             onTap: () {
               _spBloc.reload().then((v) {
-                _windowBloc.toast("刷新成功");
+                _windowBloc.toast(AppLocalizations.of(context).success);
                 setState(() {});
               }).catchError((e) {
-                _windowBloc.toast("刷新失败 $e");
+                _windowBloc.toast(AppLocalizations.of(context).requestError(e));
               });
             },
           ),
@@ -138,23 +138,23 @@ class _SharedPreferencesWidgetState extends State<SharedPreferencesWidget> {
 
   ///删除选中
   void _actionDeleteFocused() {
-    _windowBloc.showDialog(msg: '是否删除选中数据', actions: [
+    _windowBloc.showDialog(msg: AppLocalizations.of(context).deleteSelectedItems, actions: [
       DialogAction(
-          text: '确定',
+          text: AppLocalizations.of(context).confirm,
           handler: (ctrl) {
             ctrl.dismiss();
             _spBloc.deleteFocused().then((value) {
-              _windowBloc.toast('删除成功');
+              _windowBloc.toast(AppLocalizations.of(context).success);
               _spBloc.reload().then((value) {
                 setState(() {});
               });
             }).catchError((e) {
-              _windowBloc.toast('删除失败 $e');
+              _windowBloc.toast(AppLocalizations.of(context).requestError(e));
             });
           },
           isPositive: true),
       DialogAction(
-          text: '取消',
+          text: AppLocalizations.of(context).cancel,
           handler: (ctrl) {
             ctrl.dismiss();
           },

@@ -21,6 +21,7 @@ import 'package:k_debug_tools_web/src/app_window_bloc.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 ///限流配置
 class ThrottleConfigWindow extends StatefulWidget {
@@ -48,7 +49,7 @@ class _ThrottleConfigWindowState extends State<ThrottleConfigWindow> {
       _downController.text = _config.downKb?.toString() ?? '';
       setState(() {});
     }).catchError((e) {
-      _windowBloc.toast('加载失败 $e');
+      _windowBloc.toast(AppLocalizations.of(context).requestError(e));
     });
     super.initState();
   }
@@ -152,16 +153,16 @@ class _ThrottleConfigWindowState extends State<ThrottleConfigWindow> {
       child: Row(
         children: <Widget>[
           ActionOutlinedButton(
-            'Save',
+            AppLocalizations.of(context).save,
             icon: Icons.save_rounded,
             enable: _config != null,
             onTap: () {
               _config.upKb = int.tryParse(_upController.text) ?? 50;
               _config.downKb = int.tryParse(_downController.text) ?? 50;
               _hookConfigBloc.saveThrottleConfig(_config).then((value) {
-                _windowBloc.toast('保存成功');
+                _windowBloc.toast(AppLocalizations.of(context).success);
               }).catchError((e) {
-                _windowBloc.toast('保存失败 $e');
+                _windowBloc.toast(AppLocalizations.of(context).requestError(e));
               });
             },
           )

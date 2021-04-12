@@ -16,9 +16,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/app/httphook/http_models.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
-
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../app_window_bloc.dart';
 import '../hook_config_bloc.dart';
@@ -97,11 +97,11 @@ class _HookConfigMapRemoteState extends State<HookConfigMapRemote> {
               hookConfig.uriPattern = _uriEditingController.text;
               _hookConfigBloc.save(hookConfig).then((value) {
                 _windowBloc.showDialog(
-                    msg: '保存成功',
+                    msg: AppLocalizations.of(context).success,
                     barrierDismissible: false,
                     actions: [
                       DialogAction(
-                          text: '确定',
+                          text: AppLocalizations.of(context).ok,
                           handler: (ctrl) {
                             ctrl.dismiss();
                             _windowBloc.close();
@@ -109,7 +109,7 @@ class _HookConfigMapRemoteState extends State<HookConfigMapRemote> {
                           isPositive: true)
                     ]);
               }).catchError((e) {
-                _windowBloc.toast('保存失败 $e');
+                _windowBloc.toast(AppLocalizations.of(context).requestError(e));
               });
             },
           ),

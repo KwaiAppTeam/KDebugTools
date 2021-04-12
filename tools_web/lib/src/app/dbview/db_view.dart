@@ -21,6 +21,7 @@ import 'package:k_debug_tools_web/src/event_bus.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
 import 'package:k_debug_tools_web/src/widgets/split.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'db_view_bloc.dart';
 import 'widgets/db_sub_windows.dart';
@@ -117,7 +118,7 @@ class _DbViewState extends State<DbView> {
       children: <Widget>[
         //刷新
         ActionOutlinedButton(
-          'Refresh',
+          AppLocalizations.of(context).refresh,
           icon: Icons.refresh,
           enable: true,
           onTap: () {
@@ -127,7 +128,7 @@ class _DbViewState extends State<DbView> {
         SizedBox(width: denseSpacing),
         //新查询
         ActionOutlinedButton(
-          'New Query',
+          AppLocalizations.of(context).newQuery,
           icon: Icons.queue,
           enable: _dbViewBloc.currentDbFile != null,
           onTap: () {

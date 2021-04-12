@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:k_debug_tools_web/src/widgets/tree.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../app_window_bloc.dart';
 import '../../../bloc_provider.dart';
@@ -65,7 +66,7 @@ class _DbTreeWidgetState extends State<DbTreeWidget> {
                   n.expanded = !n.expanded;
                   setState(() {});
                 }).catchError((e) {
-                  _windowBloc.toast('加载表失败 $e');
+                  _windowBloc.toast(AppLocalizations.of(context).requestError(e));
                 });
               } else {
                 n.expanded = !n.expanded;

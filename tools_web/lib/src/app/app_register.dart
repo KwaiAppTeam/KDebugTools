@@ -24,7 +24,7 @@ import 'package:k_debug_tools_web/src/app/pagenavigator/page_navigator.dart';
 import 'package:k_debug_tools_web/src/app/screenrecorder/screen_recorder.dart';
 import 'package:k_debug_tools_web/src/app/sharedpreferences/shared_preferences.dart';
 import 'package:k_debug_tools_web/src/app/uicheck/uicheck.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'deviceinfo/device_info.dart';
 
 typedef WidgetBuilder = Widget Function(BuildContext context);
@@ -72,8 +72,8 @@ class AppRegister {
 
   AppRegister._privateConstructor();
 
-  List<AppItem> _deskTopItems = List<AppItem>();
-  List<AppItem> _quickMenuItems = List<AppItem>();
+  List<AppItem> _deskTopItems = <AppItem>[];
+  List<AppItem> _quickMenuItems = <AppItem>[];
 
   ///显示在桌面上的应用
   List<AppItem> get deskTopAppItems => _deskTopItems.toList();
@@ -81,21 +81,24 @@ class AppRegister {
   ///快捷菜单上的应用
   List<AppItem> get quickMenuItems => _quickMenuItems.toList();
 
-  void registerDefault() {
-    _registerItemToDesktop();
-    _registerItemToQuickMenu();
+  void registerDefault(BuildContext ctx) {
+    _deskTopItems.clear();
+    _quickMenuItems.clear();
+
+    _registerItemToDesktop(ctx);
+    _registerItemToQuickMenu(ctx);
   }
 
   ///注册到桌面
-  void _registerItemToDesktop() {
+  void _registerItemToDesktop(BuildContext ctx) {
     _deskTopItems.add(AppItem(
-        name: '设备剪切板',
+        name: AppLocalizations.of(ctx).clipboard,
         icon: Icons.content_paste,
         contentBuilder: (ctx) {
           return ClipBoardWindow();
         }));
     _deskTopItems.add(AppItem(
-        name: '文件管理',
+        name: AppLocalizations.of(ctx).fileExplorer,
         icon: Icons.folder,
         contentBuilder: (ctx) {
           return FileExplorerWindow();
@@ -109,21 +112,21 @@ class AppRegister {
         }));
 
     _deskTopItems.add(AppItem(
-        name: '网络请求',
+        name: AppLocalizations.of(ctx).httpRequest,
         icon: Icons.network_check,
         contentBuilder: (ctx) {
           return HttpHookWindow();
         }));
 
     _deskTopItems.add(AppItem(
-        name: '日志查看',
+        name: AppLocalizations.of(ctx).logViewer,
         icon: Icons.view_headline,
         contentBuilder: (ctx) {
           return LogWatcherWindow();
         }));
 
     _deskTopItems.add(AppItem(
-        name: 'DbView',
+        name: AppLocalizations.of(ctx).dbViewer,
         icon: Icons.format_indent_increase,
         contentBuilder: (ctx) {
           return DbViewWindow();
@@ -137,22 +140,22 @@ class AppRegister {
 //        }));
 
     _deskTopItems.add(AppItem(
-        name: 'FlutterUI',
+        name: AppLocalizations.of(ctx).flutterWidgets,
         icon: Icons.image,
         defaultSize: Size(960, 720),
         contentBuilder: (ctx) {
           return UICheckWindow();
         }));
     _deskTopItems.add(AppItem(
-        name: '投屏录屏',
-        subTitle: '目前仅支持Android',
+        name: AppLocalizations.of(ctx).screenCast,
+        subTitle: '(Android only)',
         icon: Icons.phonelink,
         defaultSize: Size(960, 720),
         contentBuilder: (ctx) {
           return ScreenRecorderWindow();
         }));
     _deskTopItems.add(AppItem(
-        name: '路由跳转',
+        name: AppLocalizations.of(ctx).pageNavigator,
         icon: Icons.amp_stories_outlined,
         defaultSize: Size(900, 600),
         contentBuilder: (ctx) {
@@ -161,9 +164,9 @@ class AppRegister {
   }
 
   ///注册到快捷菜单
-  void _registerItemToQuickMenu() {
+  void _registerItemToQuickMenu(BuildContext ctx) {
     _quickMenuItems.add(AppItem(
-        name: '应用信息',
+        name: AppLocalizations.of(ctx).appInfo,
         icon: Icons.info_outline,
         showInNavigationBar: false,
         canFullScreen: false,
@@ -179,7 +182,7 @@ class AppRegister {
         }));
 
     _quickMenuItems.add(AppItem(
-        name: '设备信息',
+        name: AppLocalizations.of(ctx).deviceInfo,
         icon: Icons.phone_iphone,
         showInNavigationBar: false,
         canFullScreen: false,

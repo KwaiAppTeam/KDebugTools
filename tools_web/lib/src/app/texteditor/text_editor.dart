@@ -17,8 +17,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
-
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_window_bloc.dart';
 import '../../theme.dart';
@@ -124,14 +124,14 @@ class _TextEditorState extends State<TextEditor> {
       child: Row(
         children: <Widget>[
           ActionOutlinedButton(
-            'Save',
+            AppLocalizations.of(context).save,
             icon: Icons.save,
             enable: _editorBloc.hasFilePath,
             onTap: () {
               _editorBloc.save(_editingController.text).then((value) {
-                _windowBloc.toast('保存成功');
+                _windowBloc.toast(AppLocalizations.of(context).success);
               }).catchError((e) {
-                _windowBloc.toast('保存失败 $e');
+                _windowBloc.toast(AppLocalizations.of(context).requestError(e));
               });
             },
           ),

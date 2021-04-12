@@ -24,6 +24,7 @@ import 'package:k_debug_tools_web/src/web_bloc.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
 import 'package:k_debug_tools_web/src/widgets/item_picker.dart';
 import 'package:k_debug_tools_web/src/widgets/paginated_data_table.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../app_window_bloc.dart';
 import '../../../bloc_provider.dart';
@@ -77,6 +78,7 @@ class _FileListWidgetState extends State<FileListWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    AppLocalizations l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -96,9 +98,9 @@ class _FileListWidgetState extends State<FileListWidget>
                 setState(() {});
               },
               columns: [
-                DataColumn(label: Text('名称')),
-                DataColumn(label: Text('大小')),
-                DataColumn(label: Text('修改时间')),
+                DataColumn(label: Text(l10n.fileName)),
+                DataColumn(label: Text(l10n.fileSize)),
+                DataColumn(label: Text(l10n.fileModifyTime)),
               ],
               source: _dataSource,
             ),
@@ -125,6 +127,7 @@ class _FileListWidgetState extends State<FileListWidget>
 
   ///工具栏
   Widget _buildActionWidget() {
+    var l10n = AppLocalizations.of(context);
     return Container(
       height: 30,
       color: actionBarBackgroundColor(Theme.of(context)),
@@ -132,7 +135,7 @@ class _FileListWidgetState extends State<FileListWidget>
         children: <Widget>[
           ActionIcon(
             Icons.arrow_back,
-            tooltip: 'Back',
+            tooltip: l10n.back,
             enable: _fileBloc.canGoBack,
             onTap: () {
               _fileBloc.goBack();
@@ -140,14 +143,14 @@ class _FileListWidgetState extends State<FileListWidget>
           ),
           ActionIcon(
             Icons.refresh,
-            tooltip: 'Refresh',
+            tooltip: l10n.refresh,
             onTap: () {
               _dataSource.refresh();
             },
           ),
           ActionIcon(
             Icons.file_download,
-            tooltip: 'Download',
+            tooltip: l10n.download,
             enable: _itemPicker.selectedCount > 0,
             onTap: () {
               _fileBloc.download(selectedFiles);
@@ -155,13 +158,13 @@ class _FileListWidgetState extends State<FileListWidget>
           ),
           ActionIcon(
             Icons.file_upload,
-            tooltip: 'Upload',
+            tooltip: l10n.upload,
             enable: _fileBloc.canUpload,
             onTap: _actionUpload,
           ),
           ActionIcon(
             Icons.edit,
-            tooltip: 'Rename',
+            tooltip: l10n.rename,
             //选中一个时可以重命名
             enable: _itemPicker.selectedCount == 1 && !lastSelect.readOnly,
             onTap: () {
@@ -170,7 +173,7 @@ class _FileListWidgetState extends State<FileListWidget>
           ),
           ActionIcon(
             Icons.delete_forever,
-            tooltip: 'Delete',
+            tooltip: l10n.delete,
             enable: _canDeleteSelected(),
             onTap: _actionDeleteSelected,
           ),
@@ -200,21 +203,22 @@ class _FileListWidgetState extends State<FileListWidget>
 
   ///删除选中文件
   void _actionDeleteSelected() {
-    _windowBloc.showDialog(msg: '是否删除选中文件', actions: [
+    AppLocalizations l10n = AppLocalizations.of(context);
+    _windowBloc.showDialog(msg: l10n.deleteSelectedFiles, actions: [
       DialogAction(
-          text: '确定',
+          text: l10n.confirm,
           handler: (ctrl) {
             ctrl.dismiss();
             var files = selectedFiles;
             _fileBloc.delete(_fileBloc.showingDir, files).then((value) {
-              _windowBloc.toast('删除成功');
+              _windowBloc.toast(l10n.deleteSuccess);
             }).catchError((e) {
-              _windowBloc.toast('删除失败 $e');
+              _windowBloc.toast(l10n.requestError(e));
             });
           },
           isPositive: true),
       DialogAction(
-          text: '取消',
+          text: l10n.cancel,
           handler: (ctrl) {
             ctrl.dismiss();
           },
@@ -224,15 +228,16 @@ class _FileListWidgetState extends State<FileListWidget>
 
   ///上传
   void _actionUpload() {
+    AppLocalizations l10n = AppLocalizations.of(context);
     _startPickFile().then((v) {
       if (v.isNotEmpty) {
         _fileBloc.uploadFile(_fileBloc.showingDir, v).then((value) {
-          _windowBloc.toast('上传成功');
+          _windowBloc.toast(l10n.success);
           _fileBloc.reloadShowingDir().then((value) {
             setState(() {});
           });
         }).catchError((e) {
-          _windowBloc.toast('上传失败 $e');
+          _windowBloc.toast(l10n.requestError(e));
         });
       }
     }).catchError((e) {

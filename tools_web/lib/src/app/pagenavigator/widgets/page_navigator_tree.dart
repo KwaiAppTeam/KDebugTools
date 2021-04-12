@@ -82,7 +82,7 @@ class _PageNavigatorTreeWidgetState extends State<PageNavigatorTreeWidget> {
     _rootNode.icon = Icons.pages;
     _rootNode.expandable = true;
     _rootNode.expanded = true;
-    _rootNode.subs = List<Node>();
+    _rootNode.subs = <Node>[];
 
     _rootNode.data = root;
     _rootNode.expandable = root?.routes?.isNotEmpty ?? false;
@@ -101,7 +101,7 @@ class _PageNavigatorTreeWidgetState extends State<PageNavigatorTreeWidget> {
     node.key = key;
     node.icon = Icons.panorama_rounded;
     node.label = '${route.name}(${route.settings})';
-    node.subs = List<Node>();
+    node.subs = <Node>[];
     node.data = route;
     node.expandable = route.childNavigators?.isNotEmpty ?? false;
     node.expanded = node.expandable;
@@ -120,7 +120,7 @@ class _PageNavigatorTreeWidgetState extends State<PageNavigatorTreeWidget> {
     node.key = key;
     node.icon = Icons.pages;
     node.label = info.name;
-    node.subs = List<Node>();
+    node.subs = <Node>[];
     node.data = info;
     node.expandable = info.routes?.isNotEmpty ?? false;
     node.expanded = node.expandable;

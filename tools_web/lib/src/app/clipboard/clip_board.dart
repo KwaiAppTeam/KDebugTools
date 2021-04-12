@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_window_bloc.dart';
 import 'clip_board_bloc.dart';
@@ -102,7 +103,7 @@ class _ClipBoardState extends State<ClipBoard> {
       child: Row(
         children: <Widget>[
           ActionOutlinedButton(
-            '读取剪切板',
+            AppLocalizations.of(context).readClipboard,
             enable: true,
             onTap: () {
               _clipBoardBloc
@@ -111,20 +112,22 @@ class _ClipBoardState extends State<ClipBoard> {
                         _editingController.text = value;
                       }))
                   .catchError((e) {
-                _windowBloc.toast('读取失败 $e');
+                _windowBloc
+                    .toast(AppLocalizations.of(context).requestError('$e'));
               });
             },
           ),
           SizedBox(width: 8),
           ActionOutlinedButton(
-            '写入剪切板',
+            AppLocalizations.of(context).writeClipboard,
             enable: true,
             onTap: () {
               _clipBoardBloc
                   .writeToDevice(_editingController.text)
                   .then((value) => setState(() {}))
                   .catchError((e) {
-                _windowBloc.toast('写入失败 $e');
+                _windowBloc
+                    .toast(AppLocalizations.of(context).requestError('$e'));
               });
             },
           )

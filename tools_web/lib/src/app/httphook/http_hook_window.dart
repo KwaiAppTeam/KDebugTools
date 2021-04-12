@@ -22,6 +22,7 @@ import 'package:k_debug_tools_web/src/custom_color.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
 import 'package:k_debug_tools_web/src/widgets/split.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../web_bloc.dart';
 import '../app_register.dart';
@@ -209,7 +210,7 @@ class _HttpHookState extends State<HttpHook> {
 
   void _actionOpenThrottling() {
     _throtteApp ??= AppItem(
-        name: '限速配置',
+        name: AppLocalizations.of(context).throttleConfig,
         canFullScreen: false,
         icon: Icons.settings,
         canResize: false,
@@ -260,7 +261,7 @@ class _HttpHookState extends State<HttpHook> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text('过滤:'),
+        Text('${AppLocalizations.of(context).filter}:'),
         Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(

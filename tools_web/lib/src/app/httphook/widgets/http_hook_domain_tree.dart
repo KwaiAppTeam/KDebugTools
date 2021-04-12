@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/app/httphook/http_hook_bloc.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/widgets/tree.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 ///请求域名树
 class DomainTreeWidget extends StatefulWidget {
@@ -62,13 +63,13 @@ class _DomainTreeWidgetState
     if (_root == null) {
       _root = Node();
       _root.key = '';
-      _root.label = '所有域名';
+      _root.label = AppLocalizations.of(context).allHost;
       _root.expandable = true;
-      _root.subs = List<Node>();
+      _root.subs = <Node>[];
     }
     if (_httpHookBloc.httpArchiveList.isEmpty) {
       //清空旧数据
-      _root.subs = List<Node>();
+      _root.subs = <Node>[];
       _root.expanded = true;
       _allNodes.clear();
     } else {

@@ -18,6 +18,7 @@ import 'dart:ui';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:k_debug_tools_web/src/app/app_register.dart';
@@ -29,7 +30,7 @@ import 'package:k_debug_tools_web/src/web_http.dart';
 import 'package:k_debug_tools_web/src/websocket/web_socket_bloc.dart';
 import 'package:k_debug_tools_web/src/widgets/root_navi_bar.dart';
 import 'package:k_debug_tools_web/src/common_widgets.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'src/bloc_provider.dart';
 import 'src/common_widgets.dart';
 import 'src/ui/theme.dart';
@@ -37,7 +38,6 @@ import 'src/ui/theme.dart';
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
 void main() {
-  AppRegister.instance.registerDefault();
   analytics.setAnalyticsCollectionEnabled(true);
   runApp(MyApp());
 }
@@ -47,6 +47,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'KDebugTools',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: themeFor(isDarkTheme: true).copyWith(
         textSelectionTheme: TextSelectionThemeData(
           selectionColor: devtoolsBlue[400],
@@ -100,6 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _pinErrorController = StreamController<ErrorAnimationType>();
     _initAuth();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    AppRegister.instance.registerDefault(context);
+    super.didChangeDependencies();
   }
 
   void _initAuth() async {

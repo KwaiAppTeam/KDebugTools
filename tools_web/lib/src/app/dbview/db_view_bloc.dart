@@ -73,7 +73,7 @@ class DbViewBloc extends AppBlocBase {
       setState();
       return Future.value();
     } else {
-      return Future.error('加载失败');
+      return Future.error('failed');
     }
   }
 
@@ -107,7 +107,7 @@ class DbViewBloc extends AppBlocBase {
       dbInfo[id] = DbInfo.fromJson(jsonResponse['data'] as Map);
       return Future.value();
     } else {
-      return Future.error('加载失败');
+      return Future.error('failed');
     }
   }
 
@@ -120,7 +120,7 @@ class DbViewBloc extends AppBlocBase {
       TableInfo info = TableInfo.fromJson(jsonResponse['data'] as Map);
       return info;
     } else {
-      return Future.error('加载失败');
+      return Future.error('failed');
     }
   }
 
@@ -137,7 +137,7 @@ class DbViewBloc extends AppBlocBase {
       Map<String, Object> jsonResponse = jsonDecode(response.body);
       return (jsonResponse['data'] as List)?.cast<Map>();
     } else {
-      return Future.error('加载失败');
+      return Future.error('failed');
     }
   }
 
@@ -149,7 +149,7 @@ class DbViewBloc extends AppBlocBase {
       Map<String, Object> jsonResponse = jsonDecode(response.body);
       return ExecResult.fromJson(jsonResponse['data'] as Map);
     } else {
-      return Future.error('操作失败');
+      return Future.error('failed');
     }
   }
 

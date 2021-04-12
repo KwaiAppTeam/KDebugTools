@@ -66,7 +66,7 @@ class FileExplorerBloc extends AppBlocBase {
   bool get canUpload => (showingDir?.absolute?.isNotEmpty == true);
 
   ///显示历史
-  final List<FileModel> _showingHistory = List<FileModel>();
+  final List<FileModel> _showingHistory = <FileModel>[];
 
   WebBloc _webBloc;
   AppWindowBloc _windowBloc;
@@ -92,7 +92,7 @@ class FileExplorerBloc extends AppBlocBase {
     Map<String, Object> jsonResponse = convert.jsonDecode(response.body);
     if (response.statusCode == 200) {
       List list = (jsonResponse['data'] as Map)['files'] as List;
-      List<FileModel> rootSubs = List<FileModel>();
+      List<FileModel> rootSubs = <FileModel>[];
       list.forEach((element) {
         rootSubs.add(FileModel.fromMap(element as Map<String, Object>));
       });

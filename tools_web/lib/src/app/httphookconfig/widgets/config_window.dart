@@ -18,9 +18,9 @@ import 'package:k_debug_tools_web/src/app/app_register.dart';
 import 'package:k_debug_tools_web/src/app/httphookconfig/hook_config_bloc.dart';
 import 'package:k_debug_tools_web/src/app_window_bloc.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
-
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../web_bloc.dart';
 import 'config_list.dart';
@@ -52,7 +52,7 @@ class _HookConfigListWindowState extends State<HookConfigListWindow> {
     _hookConfigBloc.loadConfigs().then((value) {
       setState(() {});
     }).catchError((e) {
-      _windowBloc.toast('加载失败 $e');
+      _windowBloc.toast(AppLocalizations.of(context).loadFailed(e));
     });
     super.initState();
   }
@@ -94,7 +94,7 @@ class _HookConfigListWindowState extends State<HookConfigListWindow> {
               _hookConfigBloc.loadConfigs().then((value) {
                 setState(() {});
               }).catchError((e) {
-                _windowBloc.toast('加载失败 $e');
+                _windowBloc.toast(AppLocalizations.of(context).loadFailed(e));
               });
             },
           ),
@@ -116,7 +116,7 @@ class _HookConfigListWindowState extends State<HookConfigListWindow> {
 
   void _actionShowNewMapLocal() {
     _newConfigApp ??= AppItem(
-        name: '新建规则',
+        name: AppLocalizations.of(context).addRule,
         subTitle: 'Map Local',
         canFullScreen: false,
         icon: Icons.add_rounded,
@@ -130,7 +130,7 @@ class _HookConfigListWindowState extends State<HookConfigListWindow> {
 
   void _actionShowNewMapRemote() {
     _newConfigApp ??= AppItem(
-        name: '新建规则',
+        name: AppLocalizations.of(context).addRule,
         subTitle: 'Map Remote',
         canFullScreen: false,
         icon: Icons.add_rounded,

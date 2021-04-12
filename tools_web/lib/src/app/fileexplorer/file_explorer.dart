@@ -19,6 +19,7 @@ import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
 import 'package:k_debug_tools_web/src/widgets/split.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../web_bloc.dart';
 import 'file_explorer_bloc.dart';
@@ -129,7 +130,7 @@ class _FileExplorerState extends State<FileExplorer> {
       child: Row(
         children: <Widget>[
           ActionOutlinedButton(
-            'Refresh',
+            AppLocalizations.of(context).refresh,
             icon: Icons.refresh,
             onTap: () {
               //todo

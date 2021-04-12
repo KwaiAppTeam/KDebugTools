@@ -20,6 +20,7 @@ import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/custom_color.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'log_watcher_bloc.dart';
 
@@ -197,7 +198,7 @@ class _LogWatcherState extends State<LogWatcher> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text('过滤:'),
+        Text('${AppLocalizations.of(context).filter}:'),
         Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(

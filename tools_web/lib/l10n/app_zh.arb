@@ -1,0 +1,72 @@
+{
+    "requestError": "请求错误: {error}",
+    "@requestError": {
+        "placeholders": {
+            "error": {}
+        }
+    },
+    "clipboard": "设备剪切板",
+    "fileExplorer": "文件管理",
+    "httpRequest": "网络请求",
+    "logViewer": "日志查看",
+    "dbViewer": "数据库管理",
+    "flutterWidgets": "FlutterWidgets",
+    "screenCast": "投屏录屏",
+    "pageNavigator": "路由跳转",
+    "appInfo": "应用信息",
+    "deviceInfo": "设备信息",
+    "readClipboard": "读取剪切板",
+    "writeClipboard": "写入剪切板",
+    "display": "屏幕信息",
+    "hardware": "硬件信息",
+    "others": "其他信息",
+    "disconnect": "未连接",
+    "refresh": "刷新",
+    "newQuery": "新建查询",
+    "fileName": "名称",
+    "fileSize": "大小",
+    "fileModifyTime": "修改时间",
+    "back": "返回",
+    "download": "下载",
+    "upload": "上传",
+    "rename": "重命名",
+    "delete": "删除",
+    "confirm": "确定",
+    "cancel": "取消",
+    "ok": "确定",
+    "success": "成功",
+    "save": "保存",
+    "deleteSelectedFiles": "是否删除选中文件？",
+    "deleteSuccess": "删除成功",
+    "addRule": "新建规则",
+    "editRule": "修改规则",
+    "allHost": "所有域名",
+    "filter": "过滤",
+    "deleteSelectedItems": "是否删除选中数据",
+    "confirmPopPage": "是否Pop页面\n{pageName}",
+    "@confirmPopPage": {
+        "placeholders": {
+            "pageName": {}
+        }
+    },
+    "recordFile": "录屏文件",
+    "recording": "录制中",
+    "stopRecord": "停止录屏 保存文件: ${file}",
+    "@stopRecord": {
+        "placeholders": {
+            "file": {}
+        }
+    },
+    "stopFailed": "停止失败",
+    "startRecord": "开始录屏",
+    "startFailed": "开启失败",
+    "checkScreenPermission": "请在手机上授权录屏",
+    "throttleConfig": "限速配置",
+    "loadFailed": "加载失败: {error}",
+    "@loadFailed": {
+        "placeholders": {
+            "error": {}
+        }
+    }
+
+}

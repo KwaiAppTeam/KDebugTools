@@ -20,6 +20,7 @@ import 'package:k_debug_tools_web/src/app/httphookconfig/widgets/map_remote_edit
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/web_bloc.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../app_window_bloc.dart';
 import '../../../bloc_provider.dart';
@@ -268,7 +269,7 @@ class _ArchiveListWidgetState extends State<ArchiveListWidget>
 
   void _actionShowNewMapLocal(HttpArchive archive) {
     _webBloc.openNewApp(AppItem(
-        name: '新建规则',
+        name: AppLocalizations.of(context).addRule,
         subTitle: 'Map Local',
         canFullScreen: false,
         icon: Icons.add_rounded,
@@ -284,7 +285,7 @@ class _ArchiveListWidgetState extends State<ArchiveListWidget>
 
   void _actionShowNewMapRemote(HttpArchive archive) {
     _webBloc.openNewApp(AppItem(
-        name: '新建规则',
+        name: AppLocalizations.of(context).addRule,
         subTitle: 'Map Remote',
         canFullScreen: false,
         icon: Icons.add_rounded,

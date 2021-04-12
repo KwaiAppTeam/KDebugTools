@@ -27,6 +27,7 @@ import 'package:k_debug_tools_web/src/websocket/web_socket_bloc.dart';
 import 'package:k_debug_tools_web/src/websocket/web_socket_models.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
 import 'package:k_debug_tools_web/src/widgets/root_navi_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'device_info_bloc.dart';
 
@@ -104,7 +105,7 @@ class _DeviceInfoWidgetState extends State<DeviceInfoWidget> {
             color: titleSolidBackgroundColor(theme),
             padding: EdgeInsets.only(left: 8, right: 8),
             child: Text(
-              '屏幕信息',
+              AppLocalizations.of(context).display,
               style: theme.textTheme.subtitle2.copyWith(fontSize: 12),
             ),
           ),
@@ -121,7 +122,7 @@ class _DeviceInfoWidgetState extends State<DeviceInfoWidget> {
             color: titleSolidBackgroundColor(theme),
             padding: EdgeInsets.only(left: 8, right: 8),
             child: Text(
-              '其他信息',
+              AppLocalizations.of(context).others,
               style: theme.textTheme.subtitle2.copyWith(fontSize: 12),
             ),
           ),
@@ -138,7 +139,7 @@ class _DeviceInfoWidgetState extends State<DeviceInfoWidget> {
             color: titleSolidBackgroundColor(theme),
             padding: EdgeInsets.only(left: 8, right: 8),
             child: Text(
-              '硬件信息',
+              AppLocalizations.of(context).hardware,
               style: theme.textTheme.subtitle2.copyWith(fontSize: 12),
             ),
           ),
@@ -266,7 +267,7 @@ class _DeviceInfoQuickItemState extends State<DeviceInfoQuickItem> {
             left: 0,
             right: 0,
             child: Text(
-              _webSocketBloc.isConnected() ? '' : '未连接',
+              _webSocketBloc.isConnected() ? '' : AppLocalizations.of(context).disconnect,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 10, color: Colors.white),
             ),

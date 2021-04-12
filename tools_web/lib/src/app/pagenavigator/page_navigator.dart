@@ -19,9 +19,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/app_window_bloc.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
-
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../web_bloc.dart';
 import 'page_navigator_bloc.dart';
@@ -202,7 +202,7 @@ class _PageNavigatorState extends State<PageNavigator> {
         children: <Widget>[
           ActionIcon(
             Icons.refresh,
-            tooltip: 'Refresh',
+            tooltip: AppLocalizations.of(context).refresh,
             onTap: () {
               _loadInfo();
             },
@@ -259,12 +259,12 @@ class _PageNavigatorState extends State<PageNavigator> {
                   .pushRoute(_urlEditingController.text,
                       (selectNodeData as NavigatorInfo).name)
                   .then((value) {
-                _windowBloc.toast('Push成功');
+                _windowBloc.toast(AppLocalizations.of(context).success);
                 Timer(Duration(seconds: 1), () {
                   _loadInfo();
                 });
               }).catchError((e) {
-                _windowBloc.toast('Push失败 $e');
+                _windowBloc.toast(AppLocalizations.of(context).requestError(e));
               });
             }
           },
@@ -275,23 +275,23 @@ class _PageNavigatorState extends State<PageNavigator> {
 
   void _actionPopSelected() {
     RouteInfo info = _navigatorBloc.selectedNodeData as RouteInfo;
-    _windowBloc.showDialog(msg: '是否Pop页面\n${info.name}', actions: [
+    _windowBloc.showDialog(msg: AppLocalizations.of(context).confirmPopPage(info.name), actions: [
       DialogAction(
-          text: '确定',
+          text: AppLocalizations.of(context).confirm,
           handler: (ctrl) {
             ctrl.dismiss();
             _navigatorBloc.popRoute(info).then((value) {
-              _windowBloc.toast('Pop成功');
+              _windowBloc.toast(AppLocalizations.of(context).success);
               Timer(Duration(seconds: 1), () {
                 _loadInfo();
               });
             }).catchError((e) {
-              _windowBloc.toast('Pop失败 $e');
+              _windowBloc.toast(AppLocalizations.of(context).requestError(e));
             });
           },
           isPositive: true),
       DialogAction(
-          text: '取消',
+          text: AppLocalizations.of(context).cancel,
           handler: (ctrl) {
             ctrl.dismiss();
           },

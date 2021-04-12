@@ -15,9 +15,9 @@
 import 'package:flutter/material.dart';
 import 'package:k_debug_tools_web/src/app/httphookconfig/hook_config_bloc.dart';
 import 'package:k_debug_tools_web/src/app/httphookconfig/hook_config_models.dart';
-
 import 'package:k_debug_tools_web/src/web_bloc.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../app_window_bloc.dart';
 import '../../../bloc_provider.dart';
@@ -196,7 +196,7 @@ class _ConfigListWidgetState extends State<ConfigListWidget>
 
   void _actionDelete(HookConfig config) {
     _configBloc.delete(config).then((value) {
-      _windowBloc.toast('删除成功');
+      _windowBloc.toast(AppLocalizations.of(context).success);
       _configBloc.loadConfigs().then((value) {
         setState(() {});
       });
@@ -205,7 +205,7 @@ class _ConfigListWidgetState extends State<ConfigListWidget>
 
   void _actionShowEditMapLocal(HookConfig config) {
     _webBloc.openNewApp(AppItem(
-        name: '修改规则',
+        name: AppLocalizations.of(context).editRule,
         subTitle: 'Map Local - ${config.id}',
         canFullScreen: false,
         icon: Icons.add_rounded,
@@ -221,7 +221,7 @@ class _ConfigListWidgetState extends State<ConfigListWidget>
 
   void _actionShowEditMapRemote(HookConfig config) {
     _webBloc.openNewApp(AppItem(
-        name: '修改规则',
+        name: AppLocalizations.of(context).editRule,
         subTitle: 'Map Remote - ${config.id}',
         canFullScreen: false,
         icon: Icons.add_rounded,

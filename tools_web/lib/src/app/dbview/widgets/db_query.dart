@@ -364,9 +364,9 @@ class _DbQueryExecResultDataResultState
   }
 
   List<DataRow> _buildRow() {
-    List<DataRow> rows = List<DataRow>();
+    List<DataRow> rows = <DataRow>[];
     widget.data.forEach((row) {
-      List<DataCell> cells = List<DataCell>();
+      List<DataCell> cells = <DataCell>[];
       widget.data.first.keys.forEach((k) {
         cells.add(DataCell(Text('${row[k]}')));
       });

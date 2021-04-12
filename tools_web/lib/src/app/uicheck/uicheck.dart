@@ -23,6 +23,7 @@ import 'package:k_debug_tools_web/src/app/uicheck/uicheck_models.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_window_bloc.dart';
 
@@ -71,7 +72,7 @@ class _UiCheckState extends State<UiCheck> {
     _screenBloc.capture().then((value) {
       setState(() {});
     }).catchError((e, s) {
-      _windowBloc.toast('加载失败 $e');
+      _windowBloc.toast(AppLocalizations.of(context).loadFailed(e));
       debugPrint('$e $s');
     });
     super.initState();
@@ -293,7 +294,7 @@ class _UiCheckState extends State<UiCheck> {
     _screenBloc.capture().then((value) {
       setState(() {});
     }).catchError((e) {
-      _windowBloc.toast('加载失败 $e');
+      _windowBloc.toast(AppLocalizations.of(context).loadFailed(e));
     });
     setState(() {});
   }
@@ -307,7 +308,7 @@ class _UiCheckState extends State<UiCheck> {
         children: <Widget>[
           ActionIcon(
             Icons.refresh,
-            tooltip: 'Refresh',
+            tooltip: AppLocalizations.of(context).refresh,
             enable: true,
             onTap: () {
               _refresh();

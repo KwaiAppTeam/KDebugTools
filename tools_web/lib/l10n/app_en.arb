@@ -1,0 +1,71 @@
+{
+    "requestError": "Request error: {error}",
+    "@requestError": {
+      "placeholders": {
+        "error": {}
+      }
+    },
+    "clipboard": "Clipboard",
+    "fileExplorer": "FileExplorer",
+    "httpRequest": "HttpRequest",
+    "logViewer": "LogViewer",
+    "dbViewer": "DbViewer",
+    "flutterWidgets": "FlutterWidgets",
+    "screenCast": "ScreenCast",
+    "pageNavigator": "PageNavigator",
+    "appInfo": "AppInfo",
+    "deviceInfo": "DeviceInfo",
+    "readClipboard": "Load",
+    "writeClipboard": "Write",
+    "display": "Display",
+    "hardware": "Hardware",
+    "others": "Others",
+    "disconnect": "disconnect",
+    "refresh": "Refresh",
+    "newQuery": "New Query",
+    "fileName": "Name",
+    "fileSize": "Size",
+    "fileModifyTime": "Last Modified",
+    "back": "Back",
+    "download": "Download",
+    "upload": "Upload",
+    "rename": "Rename",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "ok": "Ok",
+    "success": "Success",
+    "save": "Save",
+    "deleteSelectedFiles": "Delete selected files?",
+    "deleteSuccess": "Delete success",
+    "addRule": "Add rule",
+    "editRule": "Edit rule",
+    "allHost": "Hosts",
+    "filter": "Filter",
+    "deleteSelectedItems": "Delete selected items?",
+    "confirmPopPage": "Pop page\n{pageName}",
+    "@confirmPopPage": {
+        "placeholders": {
+            "pageName": {}
+        }
+    },
+    "recordFile": "Record files",
+    "recording": "Recording",
+    "stopRecord": "Stop recording, path: ${file}",
+    "@stopRecord": {
+        "placeholders": {
+            "file": {}
+        }
+    },
+    "stopFailed": "Stop failed",
+    "startRecord": "Start record",
+    "startFailed": "Start failed",
+    "checkScreenPermission": "grant permission in device",
+    "throttleConfig": "ThrottleConfig",
+    "loadFailed": "Load failed: {error}",
+    "@loadFailed": {
+        "placeholders": {
+            "error": {}
+        }
+    }
+}

@@ -22,6 +22,7 @@ import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/custom_color.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
 import 'package:k_debug_tools_web/src/widgets/common_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_window_bloc.dart';
 import '../../web_bloc.dart';
@@ -99,7 +100,7 @@ class _ScreenRecorderState extends State<ScreenRecorder> {
   void _openRecordFileDir(String dir) {
     //todo 考虑解耦
     recordFileDir ??= AppItem(
-        name: '录屏文件',
+        name: AppLocalizations.of(context).recordFile,
         icon: Icons.insert_drive_file,
         contentBuilder: (ctx) {
           return FileExplorerWindow(
@@ -161,7 +162,7 @@ class _ScreenRecorderState extends State<ScreenRecorder> {
   Widget _buildActionWidget() {
     String recordState = '';
     if (_screenBloc.isAppRecording) {
-      recordState = '录制中 ${_screenBloc.recordingDuration.inSeconds}s/';
+      recordState = '${AppLocalizations.of(context).recording} ${_screenBloc.recordingDuration.inSeconds}s/';
     }
     return Container(
       height: 30,
@@ -186,7 +187,7 @@ class _ScreenRecorderState extends State<ScreenRecorder> {
             enable: _screenBloc.isAppServiceRunning,
             onTap: () {
               _screenBloc.downloadCapture().catchError((e) {
-                _windowBloc.toast('下载失败 $e');
+                _windowBloc.toast('Download failed');
               });
             },
           ),
@@ -204,15 +205,15 @@ class _ScreenRecorderState extends State<ScreenRecorder> {
             onTap: () {
               if (_screenBloc.isAppRecording) {
                 _screenBloc.stopRecordToFile().then((value) {
-                  _windowBloc.toast('停止录屏 保存文件: $value');
+                  _windowBloc.toast(AppLocalizations.of(context).stopRecord(value));
                 }).catchError((e) {
-                  _windowBloc.toast('停止失败 $e');
+                  _windowBloc.toast('${AppLocalizations.of(context).stopFailed} $e');
                 });
               } else {
                 _screenBloc.startRecordToFile().then((value) {
-                  _windowBloc.toast('开始录屏');
+                  _windowBloc.toast(AppLocalizations.of(context).startRecord);
                 }).catchError((e) {
-                  _windowBloc.toast('开启失败 $e');
+                  _windowBloc.toast('${AppLocalizations.of(context).startFailed} $e');
                 });
               }
             },
@@ -251,12 +252,12 @@ class _ScreenRecorderState extends State<ScreenRecorder> {
 
   void _startPreview() {
     if (!_screenBloc.isAppServiceRunning) {
-      _windowBloc.toast('请在手机上授权录屏');
+      _windowBloc.toast(AppLocalizations.of(context).checkScreenPermission);
     }
     _screenBloc.startPreview().then((value) {
       setState(() {});
     }).catchError((e) {
-      _windowBloc.toast('开启失败 $e');
+      _windowBloc.toast('${AppLocalizations.of(context).startFailed} $e');
     });
   }
 }

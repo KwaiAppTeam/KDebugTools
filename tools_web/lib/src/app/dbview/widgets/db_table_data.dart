@@ -253,7 +253,7 @@ class DbTableDataSource extends DataTableSource {
   }
 
   List<DataCell> _createRowCells(int row) {
-    List<DataCell> cells = List<DataCell>();
+    List<DataCell> cells = <DataCell>[];
     for (int i = 0; i < tableInfo.columns.length; i++) {
       cells.add(DataCell(
           ConstrainedBox(

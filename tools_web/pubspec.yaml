@@ -11,11 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   uuid: ^2.2.2
   cupertino_icons: ^1.0.2
   http: ^0.12.2
   oktoast: ^2.3.2
-  intl: ^0.16.1
+  intl: ^0.17.0
   rxdart: ^0.25.0
   web_socket_channel: ^1.2.0
   event_bus: ^1.1.1
@@ -36,4 +38,5 @@ dev_dependencies:
 
 
 flutter:
+  generate: true
   uses-material-design: true
