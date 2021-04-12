@@ -43,7 +43,7 @@ import 'handlers/screen_recorder_handler.dart';
 import 'handlers/sp_handler.dart';
 
 ///对应发布到cdn的web版本
-const _WEB_VERSION = 'v1.0.0';
+const _WEB_VERSION = 'v1.0.2';
 
 ///用于校验身份请求
 String _pinCode;
@@ -206,7 +206,7 @@ class WebServer {
 
     //proxy other get request
     var proxy = proxyHandler(
-        "http://static.yximgs.com/udata/pkg/KS-IDEA/debug_tools_web/$_WEB_VERSION/");
+        "http://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/web/$_WEB_VERSION/");
     router.get('/<proxypath|.*>', (shelf.Request request, String proxypath) {
       debugPrint('proxy request >>>>> $proxypath');
       return proxy(request);

@@ -2,9 +2,9 @@
 
 KDebugTools是一套适用于Flutter平台的移动端应用研发辅助工具
 
-![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/web2.jpg)
+![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/webzh.jpg)
 
-![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/sdk2.jpg)
+![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/pluginzh.jpg)
 
 ### 通过内置的Web服务,可在电脑浏览器实现以下功能
 

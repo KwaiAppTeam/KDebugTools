@@ -4,9 +4,9 @@ KDebugTools is a powerful library for debugging Flutter applications
 
 [Chinese](https://github.com/KwaiAppTeam/KDebugTools/blob/main/README_CN.md)
 
-![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/web2.jpg)
+![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/web.jpg)
 
-![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/sdk2.jpg)
+![Overview](https://static.yximgs.com/udata/pkg/KS-IDEA/k_debug_tools/readme/plugin.jpg)
 
 ### You can access these features via WebBrowser
 

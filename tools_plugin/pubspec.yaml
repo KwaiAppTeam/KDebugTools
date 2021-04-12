@@ -1,6 +1,6 @@
 name: k_debug_tools
-description: Tools for debug flutter app.
-version: 1.0.1+1
+description: KDebugTools is a powerful library for debugging Flutter applications.
+version: 1.0.2
 homepage: https://github.com/KwaiAppTeam/KDebugTools
 level: utility
 publish_to: 'https://pub.dev'
