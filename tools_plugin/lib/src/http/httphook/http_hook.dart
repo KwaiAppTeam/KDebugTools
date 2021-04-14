@@ -29,16 +29,16 @@ class HttpHook {
   final Uri url;
 
   // ignore: close_sinks
-  HttpClientRequest _realRequest;
+  HttpClientRequest? _realRequest;
 
-  HttpArchive _archive;
+  late HttpArchive _archive;
 
-  HookConfig _hookConfig;
+  HookConfig? _hookConfig;
 
   bool hookRequestOnce = false;
-  List<int> modifiedRequestData;
+  List<int>? modifiedRequestData;
   bool hookResponseOnce = false;
-  List<int> modifiedResponseData;
+  List<int>? modifiedResponseData;
 
   ///映射请求
   bool get needMapRemote => _hookConfig?.mapRemote ?? false;
@@ -51,7 +51,7 @@ class HttpHook {
   ///修改响应
   bool get needModifyResponse => _hookConfig?.modifyResponse ?? false;
 
-  HttpHook(this.method, this.url, {HttpArchive archive}) {
+  HttpHook(this.method, this.url, {HttpArchive? archive}) {
     _archive = archive ?? HttpArchive();
   }
 
@@ -62,8 +62,8 @@ class HttpHook {
     for (var config in configs) {
       //检查是否匹配 todo 匹配规则需要再优化
       RegExp reg = RegExp(
-          '^${config.uriPattern.replaceAll('?', r'\?').replaceAll('*', r'[^ /]*').replaceAll(r'[^ /]*[^ /]*', r'[^ ]*')}\$');
-      if (config.enable && reg.hasMatch(url.toString())) {
+          '^${config.uriPattern!.replaceAll('?', r'\?').replaceAll('*', r'[^ /]*').replaceAll(r'[^ /]*[^ /]*', r'[^ ]*')}\$');
+      if (config.enable! && reg.hasMatch(url.toString())) {
         _hookConfig = config;
         break;
       }
@@ -71,10 +71,10 @@ class HttpHook {
     _archive.hookConfig = _hookConfig;
 
     if (needModifyRequest) {
-      modifiedRequestData = utf8.encode(_hookConfig.modifyRequestBody ?? '');
+      modifiedRequestData = utf8.encode(_hookConfig!.modifyRequestBody ?? '');
     }
     if (needModifyResponse) {
-      modifiedResponseData = utf8.encode(_hookConfig.modifyResponseBody ?? '');
+      modifiedResponseData = utf8.encode(_hookConfig!.modifyResponseBody ?? '');
     }
     _archive.status = 'Connecting';
     HttpHookController.instance.sendToWeb(_archive);
@@ -87,7 +87,7 @@ class HttpHook {
     _archiveRequestHeadersIfNeed();
     if (needModifyRequest) {
       //需要在写入数据前修改头部长度信息
-      _realRequest.headers.contentLength = modifiedRequestData.length;
+      _realRequest!.headers.contentLength = modifiedRequestData!.length;
       _archiveModifiedRequestHeaders();
     }
   }
@@ -109,9 +109,10 @@ class HttpHook {
     //只记录一次
     if (_archive.requestHeaders == null) {
       _archive.requestHeaders = Map<String, List<String>>();
-      _realRequest.headers.forEach((name, values) {
-        _archive.requestHeaders[name] = values.toList(growable: false);
+      _realRequest!.headers.forEach((name, values) {
+        _archive.requestHeaders![name] = values.toList(growable: false);
       });
+      _archive.requestContentType = _realRequest!.headers.contentType.toString();
     }
   }
 
@@ -126,7 +127,7 @@ class HttpHook {
     _archiveResponseHeadersIfNeed(realResponse);
     _archive.status = 'Waiting';
     //记录连接
-    HttpConnectionInfo info = realResponse.connectionInfo;
+    HttpConnectionInfo info = realResponse.connectionInfo!;
     _archive.responseConnectInfo = ConnectInfo()
       ..localPort = info.localPort
       ..remotePort = info.remotePort
@@ -140,22 +141,25 @@ class HttpHook {
     if (_archive.responseHeaders == null) {
       _archive.responseHeaders = Map<String, List<String>>();
       realResponse.headers.forEach((name, values) {
-        _archive.responseHeaders[name] = values.toList(growable: false);
+        _archive.responseHeaders![name] = values.toList(growable: false);
       });
+      _archive.responseContentType = realResponse.headers.contentType.toString();
     }
   }
 
   ///是否可以记录body 不记录二进制数据
-  bool _canArchiveBody(ContentType contentType) {
-    //目前只记录文本(text和json); 文件太大
+  bool _canArchiveBody(HttpHeaders headers) {
+    var contentType = headers.contentType;
+    //目前只记录文本(text和json), 和其他小于1m的数据
     return contentType != null &&
         (contentType.primaryType == ContentType.text.primaryType ||
-            contentType.subType == ContentType.json.subType);
+            contentType.subType == ContentType.json.subType ||
+            (headers.contentLength > 0 && headers.contentLength < 1000000));
   }
 
   ///拦截请求数据 进行记录、修改
-  List<int> hookRequestData(HttpClientRequest realRequest, List<int> allData) {
-    if (_canArchiveBody(realRequest.headers.contentType)) {
+  List<int>? hookRequestData(HttpClientRequest realRequest, List<int> allData) {
+    if (_canArchiveBody(realRequest.headers)) {
       //记录原始请求体
       _archive.requestBody = Uint8List.fromList(allData);
     }
@@ -172,9 +176,9 @@ class HttpHook {
 
   ///拦截响应数据  进行记录、修改
   ///一个响应只能拦截一次
-  List<int> hookResponseData(
+  List<int>? hookResponseData(
       HttpClientResponse realResponse, List<int> allData) {
-    if (_canArchiveBody(realResponse.headers.contentType)) {
+    if (_canArchiveBody(realResponse.headers)) {
       //记录原始响应内容
       _archive.responseBody = Uint8List.fromList(allData);
     }
@@ -211,18 +215,18 @@ class HttpHook {
     if (needMapRemote) {
       //todo 需要处理这里的url的通配符
       debugPrint(
-          'map remote: ${url.toString()} >>> ${_hookConfig.mapRemoteUrl}');
-      requestUri = Uri.parse(_hookConfig.mapRemoteUrl);
+          'map remote: ${url.toString()} >>> ${_hookConfig!.mapRemoteUrl}');
+      requestUri = Uri.parse(_hookConfig!.mapRemoteUrl!);
     }
     if (needMapLocal) {
-      debugPrint('map local: ${url.toString()} >>> config#${_hookConfig.id}');
+      debugPrint('map local: ${url.toString()} >>> config#${_hookConfig!.id}');
       //本地起服务进行连接
       requestUri = HttpHookController.instance.mapLocalUri(_hookConfig);
     }
     try {
       _realRequest = await realClient.openUrl(method, requestUri);
       //记录连接
-      HttpConnectionInfo info = _realRequest.connectionInfo;
+      HttpConnectionInfo info = _realRequest!.connectionInfo!;
       _archive.requestConnectInfo = ConnectInfo()
         ..localPort = info.localPort
         ..remotePort = info.remotePort

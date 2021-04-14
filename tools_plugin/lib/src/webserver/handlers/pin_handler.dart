@@ -32,7 +32,7 @@ class PinHandler extends AbsAppHandler {
 
   Future<Response> _check(Request request) async {
     Map body = jsonDecode(await request.readAsString());
-    String pin = body['pin'];
+    String? pin = body['pin'];
     if (pin == WebServer.instance.pin) {
       return ok();
     }

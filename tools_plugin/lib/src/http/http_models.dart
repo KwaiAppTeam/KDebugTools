@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -22,40 +23,83 @@ import 'httphook/config_models.dart';
 
 ///http包数据 app和web两端对应
 class HttpArchive {
-  String uuid = Uuid().v4();
-  String status; //Connecting/Waiting/Failed/Complete
-  String method;
-  String url;
+  String? uuid = Uuid().v4();
+  String? status; //Connecting/Waiting/Failed/Complete
+  String? method;
+  String? url;
 
-  Uri get uri => url != null ? Uri.parse(url) : null;
+  Uri? get uri => url != null ? Uri.parse(url!) : null;
 
   ///开始时间
-  int start;
+  int? start;
 
   ///结束时间
-  int end;
+  int? end;
 
   ///http statusCode
-  int statusCode;
+  int? statusCode;
 
-  int responseLength;
+  int? responseLength;
 
-  Map<String, List<String>> requestHeaders;
-  Uint8List requestBody;
+  Map<String, List<String>>? requestHeaders;
+  Uint8List? requestBody;
 
-  Map<String, List<String>> responseHeaders;
-  Uint8List responseBody;
+  Map<String, List<String>>? responseHeaders;
+  Uint8List? responseBody;
 
   ///hook配置
-  HookConfig hookConfig;
-  ThrottleConfig throttleConfig;
+  HookConfig? hookConfig;
+  ThrottleConfig? throttleConfig;
 
-  ConnectInfo requestConnectInfo;
-  ConnectInfo responseConnectInfo;
+  ConnectInfo? requestConnectInfo;
+  ConnectInfo? responseConnectInfo;
+
+  String? requestContentType;
+  String? responseContentType;
 
   @override
   String toString() {
     return 'HttpArchive${toJson()}';
+  }
+
+  String? get requestBodyString {
+    if (requestBody == null || requestContentType == null) return null;
+    try {
+      if (ContentType.parse(requestContentType!)
+              .charset
+              ?.toLowerCase()
+              .endsWith('utf-8') ??
+          true) {
+        return utf8.decode(requestBody!);
+      } else {
+        //todo process other charsets
+        return latin1.decode(requestBody!);
+      }
+    } catch (e) {
+      debugPrint(
+          'decode body failed. ContentType: $requestContentType, error:$e');
+      return null;
+    }
+  }
+
+  String? get responseBodyString {
+    if (responseBody == null || responseContentType == null) return null;
+    try {
+      if (ContentType.parse(responseContentType!)
+              .charset
+              ?.toLowerCase()
+              .endsWith('utf-8') ??
+          true) {
+        return utf8.decode(responseBody!);
+      } else {
+        //todo process other charsets
+        return latin1.decode(responseBody!);
+      }
+    } catch (e) {
+      debugPrint(
+          'decode body failed. ContentType: $responseContentType, error:$e');
+      return null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -70,20 +114,25 @@ class HttpArchive {
     result['responseLength'] = responseLength;
 
     result['requestHeaders'] = requestHeaders;
-    result['requestBody'] = decodeBody(requestBody);
+    result['requestBody'] =
+        decodeBody(requestBody); //todo remove after 2.0.0release
+    result['requestBodyBase64'] = _bodyBase64(requestBody);
+    result['requestContentType'] = requestContentType;
 
     result['responseHeaders'] = responseHeaders;
-    result['responseBody'] = decodeBody(responseBody);
+    result['responseBody'] =
+        decodeBody(responseBody); //todo remove after 2.0.0release
+    result['responseBodyBase64'] = _bodyBase64(responseBody);
+    result['responseContentType'] = responseContentType;
 
     result['hookConfig'] = hookConfig;
     result['throttleConfig'] = throttleConfig;
     result['requestConnectInfo'] = requestConnectInfo;
     result['responseConnectInfo'] = responseConnectInfo;
-
     return result;
   }
 
-  static HttpArchive fromJson(Map<String, dynamic> map) {
+  static HttpArchive? fromJson(Map<String, dynamic>? map) {
     if (map == null) {
       return null;
     }
@@ -98,10 +147,12 @@ class HttpArchive {
     archive.statusCode = map['statusCode'];
     archive.responseLength = map['responseLength'];
     archive.requestHeaders = convertHeadersMap(map['requestHeaders']);
-    archive.requestBody = utf8.encode(map['requestBody'] ?? '');
+    archive.requestBody = base64Decode(map['requestBodyBase64']);
+    archive.requestContentType = map['requestContentType'];
 
     archive.responseHeaders = convertHeadersMap(map['responseHeaders']);
-    archive.responseBody = utf8.encode(map['responseBody'] ?? '');
+    archive.responseBody = base64Decode(map['responseBodyBase64']);
+    archive.responseContentType = map['responseContentType'];
 
     archive.hookConfig = map['hookConfig'] != null
         ? HookConfig.fromJson(map['hookConfig'])
@@ -120,7 +171,7 @@ class HttpArchive {
     return archive;
   }
 
-  static Map<String, List<String>> convertHeadersMap(Object map) {
+  static Map<String, List<String>>? convertHeadersMap(Object? map) {
     if (map == null) {
       return null;
     }
@@ -128,7 +179,18 @@ class HttpArchive {
         .map((key, value) => MapEntry(key, (value as List).cast<String>()));
   }
 
-  static String decodeBody(Uint8List body) {
+  static String? _bodyBase64(Uint8List? body) {
+    if (body == null) return null;
+    try {
+      return base64.encode(body);
+    } catch (e) {
+      debugPrint('encode body to base64 failed. $e');
+      return null;
+    }
+  }
+
+  //todo remove after 2.0.0release
+  static String? decodeBody(Uint8List? body) {
     if (body == null) return null;
     try {
       return utf8.decode(body);
@@ -140,9 +202,9 @@ class HttpArchive {
 }
 
 class ConnectInfo {
-  int remotePort;
-  int localPort;
-  String remoteAddress;
+  int? remotePort;
+  int? localPort;
+  String? remoteAddress;
 
   @override
   String toString() {
@@ -157,7 +219,7 @@ class ConnectInfo {
     return result;
   }
 
-  static ConnectInfo fromJson(Map<String, dynamic> map) {
+  static ConnectInfo? fromJson(Map<String, dynamic>? map) {
     if (map == null) {
       return null;
     }

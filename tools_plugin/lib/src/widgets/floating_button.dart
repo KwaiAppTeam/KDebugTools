@@ -18,7 +18,7 @@ import 'package:flutter/widgets.dart';
 import '../debugger.dart';
 
 class FloatingButtonWidget extends StatefulWidget {
-  final Function onTap;
+  final Function? onTap;
   final double btnSize;
   final IconData icon;
 
@@ -35,8 +35,8 @@ class FloatingButtonWidget extends StatefulWidget {
 class _FloatingButtonWidgetState extends State<FloatingButtonWidget> {
   double left = 30;
   double top = 80;
-  double screenWidth;
-  double screenHeight;
+  late double screenWidth;
+  late double screenHeight;
   double _opacity = 0.5;
 
   @override
@@ -57,7 +57,7 @@ class _FloatingButtonWidgetState extends State<FloatingButtonWidget> {
     Color primaryColor = Theme.of(context).primaryColor;
     primaryColor = primaryColor.withOpacity(0.6);
     w = GestureDetector(
-      onTap: widget.onTap ?? tap,
+      onTap: widget.onTap as void Function()? ?? tap,
       onDoubleTap: () {
         Debugger.instance.hideDebugger();
       },
@@ -72,7 +72,7 @@ class _FloatingButtonWidgetState extends State<FloatingButtonWidget> {
             size: 44,
             color: Colors.black.withOpacity(_opacity),
           ),
-          color: Colors.blueGrey[300].withOpacity(_opacity)),
+          color: Colors.blueGrey[300]!.withOpacity(_opacity)),
     );
 
     ///圆形

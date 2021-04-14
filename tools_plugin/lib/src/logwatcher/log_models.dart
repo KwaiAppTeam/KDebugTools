@@ -15,9 +15,9 @@
 enum LogLevel { error, warn, info, debug, verbose }
 
 class LogEntry {
-  int level; //0-5:
-  int time;
-  String msg;
+  int? level; //0-5:
+  int? time;
+  String? msg;
 
   LogEntry({this.level, this.time, this.msg});
 

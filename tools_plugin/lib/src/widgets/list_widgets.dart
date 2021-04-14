@@ -24,12 +24,12 @@ import 'toast.dart';
 ///label-value 点击后执行clickCallback 或 复制value
 class SimpleListInfoWidget extends StatelessWidget {
   final String label;
-  final String value;
+  final String? value;
   final bool canCopy;
-  final ActionCallback clickCallback;
+  final ActionCallback? clickCallback;
 
   SimpleListInfoWidget(
-      {@required this.label,
+      {required this.label,
       this.value,
       this.canCopy = true,
       this.clickCallback});
@@ -40,7 +40,7 @@ class SimpleListInfoWidget extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () {
         if (clickCallback != null) {
-          clickCallback();
+          clickCallback!();
         }
       },
       onDoubleTap: () {
@@ -56,7 +56,7 @@ class SimpleListInfoWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Text(label ?? ''),
+              Text(label),
               SizedBox(
                 width: 20,
               ),
@@ -75,13 +75,13 @@ class SimpleListInfoWidget extends StatelessWidget {
 ///文本输入
 class SimpleListInputWidget extends StatelessWidget {
   final String label;
-  final ValueGetter<String> valueGetter;
-  final ValueSetter<String> valueSetter;
-  final TextInputType keyboardType;
+  final ValueGetter<String>? valueGetter;
+  final ValueSetter<String>? valueSetter;
+  final TextInputType? keyboardType;
   final bool enable;
 
   SimpleListInputWidget(
-      {@required this.label,
+      {required this.label,
       this.valueGetter,
       this.valueSetter,
       this.keyboardType,
@@ -89,7 +89,7 @@ class SimpleListInputWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String value = valueGetter != null ? valueGetter() : '';
+    String value = valueGetter != null ? valueGetter!() : '';
     return DefaultTextStyle(
       style: TextStyle(color: enable ? Colors.black : Colors.grey),
       child: Container(
@@ -98,16 +98,13 @@ class SimpleListInputWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Text(label ?? ''),
+              Text(label),
               SizedBox(
                 width: 20,
               ),
               Expanded(
                   child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        value ?? '',
-                      ))),
+                      alignment: Alignment.centerRight, child: Text(value))),
               Visibility(
                 visible: enable,
                 child: GestureDetector(
@@ -135,11 +132,11 @@ class SimpleListInputWidget extends StatelessWidget {
     }
     showInputDialog(ctx,
             title: label,
-            initValue: valueGetter() ?? '',
+            initValue: valueGetter != null ? valueGetter!() : '',
             inputType: keyboardType)
         .then((value) {
       if (value != null) {
-        valueSetter(value);
+        valueSetter!(value);
       }
     });
   }
@@ -148,10 +145,10 @@ class SimpleListInputWidget extends StatelessWidget {
 ///label-toggle 开关功能
 class SimpleListToggleWidget extends StatelessWidget {
   final String label;
-  final ValueNotifier<bool> value;
-  final ValueChanged<bool> onChanged;
+  final ValueNotifier<bool>? value;
+  final ValueChanged<bool>? onChanged;
 
-  SimpleListToggleWidget({@required this.label, this.value, this.onChanged});
+  SimpleListToggleWidget({required this.label, this.value, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +158,7 @@ class SimpleListToggleWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text(label ?? ''),
+            Text(label),
             SizedBox(
               width: 20,
             ),
@@ -169,8 +166,8 @@ class SimpleListToggleWidget extends StatelessWidget {
                 child: Align(
                     alignment: Alignment.centerRight,
                     child: ValueListenableBuilder(
-                      valueListenable: value,
-                      builder: (_, value, child) {
+                      valueListenable: value!,
+                      builder: (_, dynamic value, child) {
                         return Switch(
                           value: value,
                           onChanged: onChanged,
@@ -189,13 +186,13 @@ class SimpleListSelectWidget extends StatelessWidget {
   final String label;
   final ValueGetter<int> valueGetter;
   final ValueSetter<int> valueSetter;
-  final List<String> itemValues;
+  final List<String?> itemValues;
 
   SimpleListSelectWidget(
-      {@required this.label,
-      @required this.valueGetter,
-      @required this.valueSetter,
-      @required this.itemValues});
+      {required this.label,
+      required this.valueGetter,
+      required this.valueSetter,
+      required this.itemValues});
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +202,7 @@ class SimpleListSelectWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text(label ?? ''),
+            Text(label),
             SizedBox(
               width: 20,
             ),
@@ -217,7 +214,7 @@ class SimpleListSelectWidget extends StatelessWidget {
                           value: '${valueGetter()}',
                           items: _buildItems(),
                           onChanged: (value) {
-                            valueSetter(int.parse(value));
+                            valueSetter(int.parse(value!));
                           }),
                     )))
           ],
@@ -227,11 +224,11 @@ class SimpleListSelectWidget extends StatelessWidget {
   }
 
   List<DropdownMenuItem<String>> _buildItems() {
-    List<DropdownMenuItem<String>> items = List();
-    if (itemValues != null && itemValues.isNotEmpty) {
+    List<DropdownMenuItem<String>> items = [];
+    if (itemValues.isNotEmpty) {
       for (int i = 0; i < itemValues.length; i++) {
         items.add(DropdownMenuItem(
-          child: Text(itemValues[i]),
+          child: Text(itemValues[i]!),
           value: '$i',
         ));
       }

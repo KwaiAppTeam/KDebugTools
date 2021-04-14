@@ -27,25 +27,25 @@ final RouteObserver<PageRoute> debuggerRouteObserver =
 
 ///主页面
 class DebugWindow extends StatefulWidget {
-  final String initialRoute;
+  final String? initialRoute;
 
-  const DebugWindow({Key key, this.initialRoute}) : super(key: key);
+  const DebugWindow({Key? key, this.initialRoute}) : super(key: key);
 
   @override
   _DebugWindowState createState() => _DebugWindowState();
 }
 
 class _DebugWindowState extends State<DebugWindow> {
-  BuildContext subContext;
+  BuildContext? subContext;
 
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
       if (widget.initialRoute?.isNotEmpty ?? false) {
-        ToolPageRoute route =
+        ToolPageRoute? route =
             DebuggerRegister.instance.getPageRoute(widget.initialRoute);
         if (route != null) {
-          showToolPage(subContext, route.name, route.pageBuilder);
+          showToolPage(subContext!, route.name, route.pageBuilder!);
         }
       }
     });
@@ -60,8 +60,8 @@ class _DebugWindowState extends State<DebugWindow> {
           return Future.value(true);
         }
         //先弹出子页面 然后弹走主页面
-        if (Navigator.of(subContext).canPop()) {
-          Navigator.of(subContext).pop();
+        if (Navigator.of(subContext!).canPop()) {
+          Navigator.of(subContext!).pop();
           return Future.value(false);
         } else {
           return Future.value(true);
@@ -109,13 +109,13 @@ class _DebugDialogState extends State<DebugDialogWidget>
     with TickerProviderStateMixin, WidgetsBindingObserver, RouteAware {
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     debuggerRouteObserver.unsubscribe(this);
     super.dispose();
   }
@@ -127,7 +127,7 @@ class _DebugDialogState extends State<DebugDialogWidget>
 
   @override
   void didChangeDependencies() {
-    debuggerRouteObserver.subscribe(this, ModalRoute.of(context));
+    debuggerRouteObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
     super.didChangeDependencies();
   }
 
@@ -159,7 +159,7 @@ class _DebugDialogState extends State<DebugDialogWidget>
             padding: EdgeInsets.only(left: 16, right: 16),
             child: ValueListenableBuilder(
               valueListenable: WebServer.instance.started,
-              builder: (_, started, child) {
+              builder: (_, dynamic started, child) {
                 return Row(
                   children: [
                     Icon(Icons.laptop_rounded, size: 40),
@@ -232,9 +232,9 @@ class _DebugDialogState extends State<DebugDialogWidget>
   }
 
   List<Widget> _createWidgetSlivers() {
-    List<Widget> pSlivers = List<Widget>();
+    List<Widget> pSlivers = <Widget>[];
     DebuggerRegister.instance.groups.forEach((group) {
-      if (group.toolWidgetBuilder.isNotEmpty) {
+      if (group.toolWidgetBuilder!.isNotEmpty) {
         pSlivers.add(_createGroupTitle(group));
         pSlivers.add(_createGroupContent(group));
       }
@@ -249,7 +249,7 @@ class _DebugDialogState extends State<DebugDialogWidget>
         color: Colors.black26,
         height: 30,
         alignment: Alignment.centerLeft,
-        child: Text(group.title),
+        child: Text(group.title!),
       ),
     );
   }
@@ -258,8 +258,8 @@ class _DebugDialogState extends State<DebugDialogWidget>
     return SliverGrid(
       gridDelegate: mySliverGridDelegate(1),
       delegate: SliverChildBuilderDelegate((context, index) {
-        return group.toolWidgetBuilder[index](context);
-      }, childCount: group.toolWidgetBuilder.length),
+        return group.toolWidgetBuilder![index](context);
+      }, childCount: group.toolWidgetBuilder!.length),
     );
   }
 

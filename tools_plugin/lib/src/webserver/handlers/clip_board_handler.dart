@@ -32,13 +32,13 @@ class ClipBoardHandler extends AbsAppHandler {
   }
 
   Future<Response> _read(Request request) async {
-    ClipboardData data = await Clipboard.getData(Clipboard.kTextPlain);
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
     return ok({'text': data?.text ?? ''});
   }
 
   Future<Response> _write(Request request) async {
     Map body = jsonDecode(await request.readAsString());
-    String text = body['text'];
+    String? text = body['text'];
     await Clipboard.setData(ClipboardData(text: text));
     return ok(null);
   }

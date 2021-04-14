@@ -15,9 +15,9 @@
 ///数据库文件
 class DbFile {
   ///用path的hashcode作为id 后面操作需要使用
-  int id;
-  String alias;
-  String path;
+  int? id;
+  String? alias;
+  String? path;
 
   DbFile({this.id, this.alias, this.path});
 
@@ -38,8 +38,8 @@ class DbFile {
 
 ///数据库信息
 class DbInfo {
-  int id;
-  List<String> tables;
+  int? id;
+  List<String?>? tables;
 
   DbInfo({this.id, this.tables});
 
@@ -66,11 +66,11 @@ class TableColumn {
     this.pk,
   });
 
-  int cid;
-  String name;
-  String type;
-  int notnull;
-  int pk;
+  int? cid;
+  String? name;
+  String? type;
+  int? notnull;
+  int? pk;
 
   factory TableColumn.fromJson(Map<String, dynamic> json) => TableColumn(
         cid: json["cid"],
@@ -98,10 +98,10 @@ class TableInfo {
     this.count,
   });
 
-  String name;
-  String dbId;
-  List<TableColumn> columns;
-  int count;
+  String? name;
+  String? dbId;
+  List<TableColumn>? columns;
+  int? count;
 
   factory TableInfo.fromJson(Map<String, dynamic> json) => TableInfo(
     name: json["name"],
@@ -113,7 +113,7 @@ class TableInfo {
   Map<String, dynamic> toJson() => {
     "name": name,
     "dbId": dbId,
-    "columns": List<dynamic>.from(columns.map((x) => x.toJson())),
+    "columns": List<dynamic>.from(columns!.map((x) => x.toJson())),
     "count": count,
   };
 }
@@ -125,8 +125,8 @@ class ExecResult {
     this.dataResult,
   });
 
-  List<SqlMessage> sqlResult;
-  List<List<Map>> dataResult;
+  List<SqlMessage>? sqlResult;
+  List<List<Map>>? dataResult;
 
   factory ExecResult.fromJson(Map<String, dynamic> json) => ExecResult(
     sqlResult: List<SqlMessage>.from(
@@ -136,9 +136,9 @@ class ExecResult {
   );
 
   Map<String, dynamic> toJson() => {
-    "sqlResult": List<dynamic>.from(sqlResult.map((x) => x.toJson())),
+    "sqlResult": List<dynamic>.from(sqlResult!.map((x) => x.toJson())),
     "dataResult": List<dynamic>.from(
-        dataResult.map((x) => List<dynamic>.from(x.map((x) => x)))),
+        dataResult!.map((x) => List<dynamic>.from(x.map((x) => x)))),
   };
 }
 
@@ -149,8 +149,8 @@ class SqlMessage {
     this.message,
   });
 
-  String sql;
-  String message;
+  String? sql;
+  String? message;
 
   factory SqlMessage.fromJson(Map<String, dynamic> json) => SqlMessage(
     sql: json["sql"],

@@ -30,15 +30,15 @@ class ServerEnv {
   static const String KEY_SERVER_INDEX = "KEY_SERVER_INDEX";
   static const String KEY_SERVER_ENV = "KEY_SERVER_ENV";
 
-  List<String> _allEnvKeys;
-  List<ServerEnvConfig> _allConfigs;
+  List<String>? _allEnvKeys;
+  List<ServerEnvConfig>? _allConfigs;
 
-  SharedPreferences _spf;
+  late SharedPreferences _spf;
 
-  ServerEnvConfig get config => _config;
-  ServerEnvConfig _config;
+  ServerEnvConfig? get config => _config;
+  ServerEnvConfig? _config;
 
-  String get envName => config.name ?? localizationOptions.unconfigured;
+  String get envName => config!.name ?? localizationOptions.unconfigured;
 
   int get envIndex => config?.index ?? 0;
 
@@ -49,7 +49,7 @@ class ServerEnv {
   }
 
   Future<void> init(
-      List<String> allEnvKeys, List<ServerEnvConfig> allConfigs) async {
+      List<String>? allEnvKeys, List<ServerEnvConfig>? allConfigs) async {
     _allEnvKeys = allEnvKeys;
     _allConfigs = allConfigs;
     _spf = await SharedPreferences.getInstance();
@@ -63,14 +63,14 @@ class ServerEnv {
   }
 
   ///映射线上域名到配置的域名
-  String mapHost(String standardHost) {
-    String result = standardHost;
-    if (_allConfigs != null && _allConfigs.isNotEmpty) {
+  String? mapHost(String standardHost) {
+    String? result = standardHost;
+    if (_allConfigs != null && _allConfigs!.isNotEmpty) {
       //第一个作为标准
-      ServerEnvConfig standard = _allConfigs[0];
-      standard.envs.forEach((key, value) {
+      ServerEnvConfig standard = _allConfigs![0];
+      standard.envs!.forEach((key, value) {
         if (standardHost == value) {
-          result = config.envs[key];
+          result = config!.envs![key];
           return;
         }
       });
@@ -79,33 +79,33 @@ class ServerEnv {
   }
 
   ///取值
-  String getEnvValue(String key) {
-    return _config?.envs[key];
+  String? getEnvValue(String key) {
+    return _config?.envs![key];
   }
 
   ///设置到当前选中的配置中
   void setEnv(String k, String v) {
-    if (!config.canEdit) {
+    if (!config!.canEdit) {
       return;
     }
-    config.envs[k] = v;
+    config!.envs![k] = v;
     //save to sp
-    _spf.setString('$KEY_SERVER_ENV-${config.index}', json.encode(config.envs));
+    _spf.setString('$KEY_SERVER_ENV-${config!.index}', json.encode(config!.envs));
   }
 
   ///读取配置 会从preferences尝试读取自定义的内容
-  ServerEnvConfig _loadConfig(int index) {
-    if (_allConfigs == null || _allConfigs.length < index || index < 0) {
+  ServerEnvConfig? _loadConfig(int index) {
+    if (_allConfigs == null || _allConfigs!.length < index || index < 0) {
       return null;
     }
-    ServerEnvConfig config = _allConfigs[index];
+    ServerEnvConfig config = _allConfigs![index];
     if (config.canEdit) {
       //load from preferences
       String str = _spf.getString('$KEY_SERVER_ENV-$index') ?? '';
       if (str.isNotEmpty) {
         Map map = json.decode(str) as Map;
         map.forEach((key, value) {
-          config.envs[key.toString()] = value.toString();
+          config.envs![key.toString()] = value.toString();
         });
       }
     }
@@ -136,8 +136,8 @@ class _ServerEnvConfigPageState extends State<ServerEnvConfigPage> {
   }
 
   List<Widget> _buildInfo() {
-    List<Widget> result = List<Widget>();
-    List<String> names = List<String>();
+    List<Widget> result = <Widget>[];
+    List<String?> names = <String?>[];
     ServerEnv.instance._allConfigs?.forEach((e) {
       names.add(e.name);
     });
@@ -160,9 +160,9 @@ class _ServerEnvConfigPageState extends State<ServerEnvConfigPage> {
       result.add(SimpleListInputWidget(
         label: key,
         keyboardType: TextInputType.url,
-        enable: ServerEnv.instance.config.canEdit,
+        enable: ServerEnv.instance.config!.canEdit,
         valueGetter: () {
-          return ServerEnv.instance.config.envs[key] ?? '';
+          return ServerEnv.instance.config!.envs![key] ?? '';
         },
         valueSetter: (v) {
           debugPrint('set Env: $key >>> $v');

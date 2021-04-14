@@ -24,35 +24,35 @@ import 'httphook/http_hook.dart';
 
 //解决1.22.4新增abort导致不兼容问题
 extension _abort on HttpClientRequest {
-  void abort([Object exception, StackTrace stackTrace]) {
+  void abort([Object? exception, StackTrace? stackTrace]) {
     this.abort(exception, stackTrace);
   }
 }
 
 class HttpClientRequestWrapper extends HttpClientRequest {
-  HttpClientRequest _realRequest;
+  HttpClientRequest? _realRequest;
 
   HttpHook _httpHook;
 
-  _BodyBuffer _bodyBuffer;
+  late _BodyBuffer _bodyBuffer;
 
   HttpClientRequestWrapper(this._realRequest, this._httpHook) {
     _bodyBuffer = _BodyBuffer();
   }
 
   @override
-  Encoding get encoding => _realRequest.encoding;
+  Encoding get encoding => _realRequest!.encoding;
 
   @override
-  void abort([Object exception, StackTrace stackTrace]) {
-    _realRequest.abort(exception, stackTrace);
+  void abort([Object? exception, StackTrace? stackTrace]) {
+    _realRequest!.abort(exception, stackTrace);
   }
 
   @override
-  void addError(Object error, [StackTrace stackTrace]) {
+  void addError(Object error, [StackTrace? stackTrace]) {
     //todo
 //    debugPrint('_interceptRequest addError');
-    _realRequest.addError(error, stackTrace);
+    _realRequest!.addError(error, stackTrace);
   }
 
   @override
@@ -69,48 +69,48 @@ class HttpClientRequestWrapper extends HttpClientRequest {
   Future<HttpClientResponse> close() async {
     //写入内容
     _httpHook.beforeAddRequestData();
-    List<int> data =
-        _httpHook.hookRequestData(_realRequest, _bodyBuffer._buffer.toList());
+    List<int>? data =
+        _httpHook.hookRequestData(_realRequest!, _bodyBuffer._buffer.toList());
     //限流
     await HttpThrottleController.instance.doUpTask(_realRequest, data);
     _bodyBuffer.close();
     _httpHook.beforeRequestClose();
-    _realRequest.close();
+    _realRequest!.close();
     return done;
   }
 
   @override
-  HttpConnectionInfo get connectionInfo => _realRequest.connectionInfo;
+  HttpConnectionInfo? get connectionInfo => _realRequest!.connectionInfo;
 
   @override
-  List<Cookie> get cookies => _realRequest.cookies;
+  List<Cookie> get cookies => _realRequest!.cookies;
 
   @override
   Future<HttpClientResponse> get done async {
-    HttpClientResponse _realResp = await _realRequest.done;
+    HttpClientResponse _realResp = await _realRequest!.done;
     _httpHook.afterRequestDone(_realResp);
     return HttpClientResponseWrapper(_realResp, _httpHook);
   }
 
   @override
   Future flush() {
-    return _realRequest.flush();
+    return _realRequest!.flush();
   }
 
   @override
-  HttpHeaders get headers => _realRequest.headers;
+  HttpHeaders get headers => _realRequest!.headers;
 
   @override
-  String get method => _realRequest.method;
+  String get method => _realRequest!.method;
 
   @override
-  Uri get uri => _realRequest.uri;
+  Uri get uri => _realRequest!.uri;
 
   @override
-  void write(Object obj) {
+  void write(Object? obj) {
     String string = '$obj';
     if (string.isEmpty) return;
-    add(_realRequest.encoding.encode(string));
+    add(_realRequest!.encoding.encode(string));
   }
 
   @override
@@ -136,19 +136,19 @@ class HttpClientRequestWrapper extends HttpClientRequest {
   }
 
   @override
-  void writeln([Object object = ""]) {
+  void writeln([Object? object = ""]) {
     write(object);
     write("\n");
   }
 
   @override
   set encoding(Encoding _encoding) {
-    _realRequest.encoding = _encoding;
+    _realRequest!.encoding = _encoding;
   }
 }
 
 class _BodyBuffer implements StreamConsumer<List<int>> {
-  Completer _doneCompleter;
+  Completer? _doneCompleter;
 
   Uint8List _buffer = Uint8List(0);
 
@@ -162,13 +162,13 @@ class _BodyBuffer implements StreamConsumer<List<int>> {
       if (data.length == 0) return;
       add(data);
     }, onDone: () {
-      _doneCompleter.complete();
+      _doneCompleter!.complete();
       _doneCompleter = null;
     }, onError: (e, s) {
-      _doneCompleter.completeError(e, s);
+      _doneCompleter!.completeError(e, s);
       _doneCompleter = null;
     });
-    return _doneCompleter.future;
+    return _doneCompleter!.future;
   }
 
   Future close() {

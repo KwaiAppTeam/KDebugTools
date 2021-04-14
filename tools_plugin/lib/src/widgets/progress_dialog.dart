@@ -39,7 +39,7 @@ class LoadingState extends State<LoadingContent>
 
   LoadingState(this._centerOnly);
 
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
   @override
   void initState() {

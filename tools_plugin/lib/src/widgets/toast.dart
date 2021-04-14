@@ -22,10 +22,10 @@ class Toast {
   /// center
   ///
   static void showToast(String content,
-      {BuildContext context,
-      ok.ToastPosition position,
+      {BuildContext? context,
+      ok.ToastPosition? position,
       bool dismissOtherToast = true,
-      Duration duration}) {
+      Duration? duration}) {
     //position = ToastPosition.top;
     position = ok.ToastPosition(align: Alignment.topCenter, offset: 265);
     ok.showToast(content,
@@ -39,7 +39,7 @@ class Toast {
         dismissOtherToast: dismissOtherToast);
   }
 
-  static void showToastWidget(Widget widget, {ok.ToastPosition position}) {
+  static void showToastWidget(Widget widget, {ok.ToastPosition? position}) {
     showToastWidget(widget, position: position);
   }
 
@@ -49,13 +49,13 @@ class Toast {
 
   static Widget buildKToast(
     String msg, {
-    BuildContext context,
+    BuildContext? context,
     TextStyle textStyle = const TextStyle(fontSize: 16, color: Colors.white),
     EdgeInsetsGeometry textPadding =
         const EdgeInsets.only(left: 20, right: 20, top: 17, bottom: 17),
     Color backgroundColor = const Color(0xb2000000),
     double radius = 8,
-    TextAlign textAlign,
+    TextAlign? textAlign,
   }) {
     return Container(
       margin: const EdgeInsets.all(50.0),

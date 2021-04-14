@@ -34,13 +34,13 @@ class HttpHookLocalService {
       HttpHookLocalService._privateConstructor();
 
   static const int _DEFAULT_PORT = 61111;
-  HttpServer _server;
+  HttpServer? _server;
 
   int _usingPort = _DEFAULT_PORT;
 
   String get mapLocalServiceUri => 'http://localhost:$_usingPort/mapLocal';
 
-  ConfigProvider _hookConfigProvider;
+  ConfigProvider? _hookConfigProvider;
 
   ///开启服务
   Future start() async {
@@ -60,10 +60,14 @@ class HttpHookLocalService {
           _usingPort++;
         }
       }
+      var router = shelf_router.Router();
+      router.get('/mapLocal', _mapLocal);
+      router.post('/mapLocal', _mapLocal);
+
       var handler = const shelf.Pipeline()
           .addMiddleware(shelf.logRequests())
-          .addHandler(_requestRouter);
-      shelf_io.serveRequests(_server, handler);
+          .addHandler(router);
+      shelf_io.serveRequests(_server!, handler);
     } catch (e) {
       debugPrint('start server error. $e');
       _server = null;
@@ -77,23 +81,17 @@ class HttpHookLocalService {
     if (_server == null) {
       return Future.value();
     }
-    await _server.close(force: true);
+    await _server!.close(force: true);
     _server = null;
     return Future.value();
   }
 
-  shelf.Handler get _requestRouter {
-    final router = shelf_router.Router();
-    router.get('/mapLocal', _mapLocal);
-    router.post('/mapLocal', _mapLocal);
-    return router.handler;
-  }
 
   Future<shelf.Response> _mapLocal(shelf.Request request) async {
     if (request.url.hasQuery &&
         request.url.queryParameters['id']?.isNotEmpty == true) {
-      int id = int.parse(request.url.queryParameters['id']);
-      ConfigRecord configRecord = await _hookConfigProvider.getRecord(id);
+      int id = int.parse(request.url.queryParameters['id']!);
+      ConfigRecord? configRecord = await _hookConfigProvider!.getRecord(id);
       if (configRecord != null) {
         HookConfig config = HookConfig.fromRecord(configRecord);
         String body = config.mapLocalBody ?? '';

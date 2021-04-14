@@ -31,10 +31,10 @@ class HttpClientWrapper implements HttpClient {
   set autoUncompress(bool value) => _realClient.autoUncompress = value;
 
   @override
-  Duration get connectionTimeout => _realClient.connectionTimeout;
+  Duration? get connectionTimeout => _realClient.connectionTimeout;
 
   @override
-  set connectionTimeout(Duration value) =>
+  set connectionTimeout(Duration? value) =>
       _realClient.connectionTimeout = value;
 
   @override
@@ -44,17 +44,17 @@ class HttpClientWrapper implements HttpClient {
   set idleTimeout(Duration value) => _realClient.idleTimeout = value;
 
   @override
-  int get maxConnectionsPerHost => _realClient.maxConnectionsPerHost;
+  int? get maxConnectionsPerHost => _realClient.maxConnectionsPerHost;
 
   @override
-  set maxConnectionsPerHost(int value) =>
+  set maxConnectionsPerHost(int? value) =>
       _realClient.maxConnectionsPerHost = value;
 
   @override
-  String get userAgent => _realClient.userAgent;
+  String? get userAgent => _realClient.userAgent;
 
   @override
-  set userAgent(String value) => _realClient.userAgent = value;
+  set userAgent(String? value) => _realClient.userAgent = value;
 
   @override
   void addCredentials(
@@ -68,19 +68,19 @@ class HttpClientWrapper implements HttpClient {
 
   @override
   set authenticate(
-          Future<bool> Function(Uri url, String scheme, String realm) f) =>
+          Future<bool> Function(Uri url, String scheme, String realm)? f) =>
       _realClient.authenticate = f;
 
   @override
   set authenticateProxy(
           Future<bool> Function(
-                  String host, int port, String scheme, String realm)
+                  String host, int port, String scheme, String realm)?
               f) =>
       _realClient.authenticateProxy = f;
 
   @override
   set badCertificateCallback(
-          bool Function(X509Certificate cert, String host, int port)
+          bool Function(X509Certificate cert, String host, int port)?
               callback) =>
       _realClient.badCertificateCallback = callback;
 
@@ -88,7 +88,7 @@ class HttpClientWrapper implements HttpClient {
   void close({bool force = false}) => _realClient.close(force: force);
 
   @override
-  set findProxy(String Function(Uri url) f) => _realClient.findProxy = f;
+  set findProxy(String Function(Uri url)? f) => _realClient.findProxy = f;
 
   @override
   Future<HttpClientRequest> delete(String host, int port, String path) =>
@@ -174,7 +174,7 @@ class HttpClientWrapper implements HttpClient {
         queryStart = i;
       }
     }
-    String query;
+    String? query;
     if (queryStart < fragmentStart) {
       query = path.substring(queryStart + 1, fragmentStart);
       path = path.substring(0, queryStart);

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 class FileModel {
-  String name;
-  String type;
-  String absolute;
-  int size;
+  String? name;
+  String? type;
+  String? absolute;
+  int? size;
   int lastModified;
-  List<FileModel> subFiles;
+  List<FileModel>? subFiles;
   bool readOnly = false;
 
   FileModel(
@@ -32,12 +32,12 @@ class FileModel {
 
   static fromMap(Map<String, Object> map) {
     FileModel model = FileModel();
-    model.name = map['name'] ?? '';
-    model.type = map['type'] ?? '';
-    model.absolute = map['absolute'] ?? '';
-    model.size = map['size'];
-    model.lastModified = map['lastModified'] ?? 0;
-    model.readOnly = map['readOnly'] ?? false;
+    model.name = map['name'] as String? ?? '';
+    model.type = map['type'] as String? ?? '';
+    model.absolute = map['absolute'] as String? ?? '';
+    model.size = map['size'] as int?;
+    model.lastModified = map['lastModified'] as int? ?? 0;
+    model.readOnly = map['readOnly'] as bool? ?? false;
     return model;
   }
 
@@ -54,7 +54,7 @@ class FileModel {
 
   bool get isDir => type == 'dir';
 
-  String get sizeStr => (size != null && size > 0)
-      ? '${(size / 1024 / 1024).toStringAsFixed(2)}M'
+  String get sizeStr => (size != null && size! > 0)
+      ? '${(size! / 1024 / 1024).toStringAsFixed(2)}M'
       : '';
 }

@@ -31,7 +31,7 @@ class ResponseWidget extends StatefulWidget {
 
 class _ResponseWidgetState extends State<ResponseWidget>
     with AutomaticKeepAliveClientMixin {
-  bool isShowAll = false;
+  bool? isShowAll = false;
   double fontSize = 14;
 
   HttpArchive get httpArchive => widget.httpArchive;
@@ -39,15 +39,15 @@ class _ResponseWidgetState extends State<ResponseWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var jsonStr = HttpArchive.decodeBody(widget.httpArchive.responseBody) ??
-        '>>>preview not support<<<';
+    var jsonStr =
+        widget.httpArchive.responseBodyString ?? '>>>preview not support<<<';
     var isJson = isJsonStr(jsonStr);
 
     var content = StringBuffer();
     content.write('headers: \n');
     content.write('${toJson(stripValue(httpArchive.responseHeaders))}\n\n');
     if (!isJson) {
-      content.write(jsonStr ?? '');
+      content.write(jsonStr);
     }
 
     return SingleChildScrollView(
@@ -65,7 +65,7 @@ class _ResponseWidgetState extends State<ResponseWidget>
                 child: Text('copy json'),
               ),
               SizedBox(width: 10),
-              Text(isShowAll ? 'shrink all' : 'expand all'),
+              Text(isShowAll! ? 'shrink all' : 'expand all'),
               Checkbox(
                 value: isShowAll,
                 onChanged: (check) {

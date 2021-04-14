@@ -33,15 +33,15 @@ class HttpHookController {
   static final int maxArchiveCount = 200;
 
   ///请求历史记录
-  List<HttpArchive> _archiveList;
+  late List<HttpArchive> _archiveList;
 
   ///默认不打开，不持久化 每次都需要设置开启
   final ValueNotifier<bool> enableHook = ValueNotifier(false);
 
-  ConfigProvider _hookConfigProvider;
-  HttpHookLocalService _localService;
+  late ConfigProvider _hookConfigProvider;
+  late HttpHookLocalService _localService;
 
-  final List<HookConfig> _hookConfigs = List<HookConfig>();
+  final List<HookConfig> _hookConfigs = <HookConfig>[];
 
   List<HookConfig> get hookConfigs => _hookConfigs.toList(growable: false);
 
@@ -50,7 +50,7 @@ class HttpHookController {
   Future init() async {
     _hookConfigProvider = ConfigProvider(dbTableName: 'hook_config');
     _localService = HttpHookLocalService.instance;
-    _archiveList = List<HttpArchive>();
+    _archiveList = <HttpArchive>[];
   }
 
   ///设置
@@ -66,7 +66,7 @@ class HttpHookController {
     }
   }
 
-  Uri mapLocalUri(HookConfig config) {
+  Uri mapLocalUri(HookConfig? config) {
     return Uri.parse(_localService.mapLocalServiceUri + '?id=${config?.id}');
   }
 
@@ -78,22 +78,25 @@ class HttpHookController {
     });
   }
 
-  Future add(HookConfig config) async {
+  Future<int> add(HookConfig? config) async {
     int id = await _hookConfigProvider.add(jsonEncode(config));
     debugPrint('HookConfig added, id: $id');
     await _reloadConfig();
+    return id;
   }
 
-  Future update(HookConfig config) async {
+  Future<int> update(HookConfig config) async {
     int rows = await _hookConfigProvider.update(config.id, jsonEncode(config));
     debugPrint('$rows hookConfig updated');
     await _reloadConfig();
+    return rows;
   }
 
-  Future delete(int id) async {
+  Future<int> delete(int? id) async {
     int rows = await _hookConfigProvider.delete(id);
     debugPrint('$rows hookConfig deleted');
     await _reloadConfig();
+    return rows;
   }
 
   void addArchive(HttpArchive archive) {

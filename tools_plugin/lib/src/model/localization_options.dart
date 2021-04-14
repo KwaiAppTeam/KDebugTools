@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-LocalizationOptions _localizationOptions;
+LocalizationOptions? _localizationOptions;
 
 LocalizationOptions get localizationOptions =>
     _localizationOptions ?? LocalizationOptions.buildEnOptions();

@@ -14,16 +14,16 @@
 
 class ServerEnvConfig {
   ///0、1、2、3...用于选中后返回的值
-  final int index;
+  final int? index;
 
   ///显示的名称
-  final String name;
+  final String? name;
 
   ///是否可编辑env
   final bool canEdit;
 
   ///变量
-  final Map<String, String> envs;
+  final Map<String, String>? envs;
 
   const ServerEnvConfig(
       {this.index, this.name, this.canEdit = false, this.envs});

@@ -24,21 +24,21 @@ typedef ItemBuilder = Widget Function(BuildContext context);
 
 ///一组相同类别的tools
 class ToolsGroup {
-  String title;
-  List<ItemBuilder> toolWidgetBuilder;
+  String? title;
+  List<ItemBuilder>? toolWidgetBuilder;
 
   ToolsGroup({this.title, this.toolWidgetBuilder});
 }
 
 class ToolPageRoute {
-  String name;
-  ToolPageBuilder pageBuilder;
+  String? name;
+  ToolPageBuilder? pageBuilder;
 
   ToolPageRoute({this.name, this.pageBuilder});
 }
 
 ///显示工具页面
-void showToolPage(BuildContext ctx, String name, ToolPageBuilder pageBuilder) {
+void showToolPage(BuildContext ctx, String? name, ToolPageBuilder pageBuilder) {
   Widget pageWrapper = SafeArea(
     top: false,
     child: DefaultTextStyle(
@@ -72,24 +72,24 @@ void showToolPage(BuildContext ctx, String name, ToolPageBuilder pageBuilder) {
 }
 
 abstract class ToolItemWidget extends StatefulWidget {
-  final IconData icon;
-  final Widget iconWidget;
+  final IconData? icon;
+  final Widget? iconWidget;
   final String name;
-  final String summary;
-  final ActionCallback clickAction;
-  final ToolPageBuilder pageBuilder;
+  final String? summary;
+  final ActionCallback? clickAction;
+  final ToolPageBuilder? pageBuilder;
 
   ToolItemWidget(
       {this.icon,
       this.iconWidget,
-      @required this.name,
+      required this.name,
       this.summary,
       this.clickAction,
       this.pageBuilder});
 
   Widget _buildIcon() {
     return iconWidget != null
-        ? iconWidget
+        ? iconWidget!
         : Icon(
             icon ?? Icons.block,
             size: 36,
@@ -99,7 +99,7 @@ abstract class ToolItemWidget extends StatefulWidget {
 
   void _showToolPage(BuildContext ctx) {
     if (pageBuilder != null) {
-      showToolPage(ctx, name, pageBuilder);
+      showToolPage(ctx, name, pageBuilder!);
     }
   }
 }
@@ -107,12 +107,12 @@ abstract class ToolItemWidget extends StatefulWidget {
 ///点击后执行action或者跳转到页面的item
 class SimpleToolItemWidget extends ToolItemWidget {
   SimpleToolItemWidget(
-      {IconData icon,
-      Widget iconWidget,
-      @required String name,
-      String summary,
-      ActionCallback clickAction,
-      ToolPageBuilder pageBuilder})
+      {IconData? icon,
+      Widget? iconWidget,
+      required String name,
+      String? summary,
+      ActionCallback? clickAction,
+      ToolPageBuilder? pageBuilder})
       : super(
             icon: icon,
             iconWidget: iconWidget,
@@ -131,7 +131,7 @@ class _SimpleToolItemWidgetState extends State<SimpleToolItemWidget> {
     return GestureDetector(
       onTap: () {
         if (widget.clickAction != null) {
-          widget.clickAction().then((v) {
+          widget.clickAction!().then((v) {
             setState(() {});
           });
         } else if (widget.pageBuilder != null) {
@@ -167,16 +167,16 @@ class _SimpleToolItemWidgetState extends State<SimpleToolItemWidget> {
 }
 
 class ToggleToolItemWidget extends ToolItemWidget {
-  final ValueNotifier<bool> value;
-  final ValueChanged<bool> onChanged;
+  final ValueNotifier<bool>? value;
+  final ValueChanged<bool>? onChanged;
 
   ToggleToolItemWidget(
-      {IconData icon,
-      Widget iconWidget,
-      @required String name,
-      String summary,
-      ActionCallback clickAction,
-      ToolPageBuilder pageBuilder,
+      {IconData? icon,
+      Widget? iconWidget,
+      required String name,
+      String? summary,
+      ActionCallback? clickAction,
+      ToolPageBuilder? pageBuilder,
       this.value,
       this.onChanged})
       : super(
@@ -199,11 +199,11 @@ class _ToggleToolItemWidgetState extends State<ToggleToolItemWidget> {
       behavior: HitTestBehavior.deferToChild,
       onTap: () {
         if (widget.clickAction != null) {
-          widget.clickAction();
+          widget.clickAction!();
         } else if (widget.pageBuilder != null) {
           widget._showToolPage(context);
         } else {
-          widget.onChanged(!widget.value.value);
+          widget.onChanged!(!widget.value!.value);
         }
       },
       child: Container(
@@ -223,7 +223,7 @@ class _ToggleToolItemWidgetState extends State<ToggleToolItemWidget> {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                widget.onChanged(!widget.value.value);
+                widget.onChanged!(!widget.value!.value);
               },
               child: Container(
                 alignment: Alignment.topCenter,
@@ -232,8 +232,8 @@ class _ToggleToolItemWidgetState extends State<ToggleToolItemWidget> {
                 child: Transform.scale(
                   scale: 0.5,
                   child: ValueListenableBuilder(
-                    valueListenable: widget.value,
-                    builder: (_, value, child) {
+                    valueListenable: widget.value!,
+                    builder: (_, dynamic value, child) {
                       return Switch(
                         value: value,
                         onChanged: widget.onChanged,
@@ -251,10 +251,10 @@ class _ToggleToolItemWidgetState extends State<ToggleToolItemWidget> {
 }
 
 class NavBar extends StatelessWidget {
-  final String title;
-  final Function onBack;
+  final String? title;
+  final Function? onBack;
 
-  const NavBar({Key key, this.title, this.onBack}) : super(key: key);
+  const NavBar({Key? key, this.title, this.onBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +270,7 @@ class NavBar extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (onBack != null) {
-                  onBack();
+                  onBack!();
                 }
               },
               child: Container(

@@ -35,17 +35,17 @@ class _RequestWidgetState extends State<RequestWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    int end = httpArchive.end;
+    int? end = httpArchive.end;
     var requestTime =
-        getDateTimeStr(DateTime.fromMillisecondsSinceEpoch(httpArchive.start));
+        getDateTimeStr(DateTime.fromMillisecondsSinceEpoch(httpArchive.start!));
     var responseTime = end != null
         ? getDateTimeStr(DateTime.fromMillisecondsSinceEpoch(end))
         : '';
-    var duration = end != null ? (end - httpArchive.start) : 0;
-    var body = HttpArchive.decodeBody(httpArchive.requestBody);
+    var duration = end != null ? (end - httpArchive.start!) : 0;
+    var body = httpArchive.requestBodyString ?? '';
     var content = StringBuffer();
     content.write('url: ${httpArchive.url}\n');
-    content.write('method: ${httpArchive.method.toUpperCase()}\n');
+    content.write('method: ${httpArchive.method!.toUpperCase()}\n');
     content.write('requestTime: $requestTime\n');
     content.write('responseTime: $responseTime\n');
     content.write(
@@ -54,13 +54,13 @@ class _RequestWidgetState extends State<RequestWidget>
     content.write('headers: \n');
     content.write('${toJson(stripValue(httpArchive.requestHeaders))}\n\n');
     content.write('params: \n');
-    content
-        .write('${toJson(stripValue(httpArchive.uri.queryParametersAll))}\n\n');
+    content.write(
+        '${toJson(stripValue(httpArchive.uri!.queryParametersAll))}\n\n');
     content.write('body: \n');
     if (isJsonStr(body)) {
       content.write(toJson(jsonDecode(body)));
     } else {
-      content.write(body ?? '');
+      content.write(body);
     }
     content.write('\n');
 
@@ -69,7 +69,7 @@ class _RequestWidgetState extends State<RequestWidget>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          RaisedButton(
+          TextButton(
             onPressed: () {
               copyClipboard(context, content.toString());
             },

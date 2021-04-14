@@ -39,8 +39,8 @@ class ScreenRecorderHandler extends AbsAppHandler {
   static const int CMD_STATE = 0;
   static const int CMD_KEEP_ALIVE = 1;
 
-  OnSocketData _onData;
-  Timer _closeWatcher;
+  OnSocketData? _onData;
+  Timer? _closeWatcher;
 
   List<StreamChannel<List<int>>> _previewCgiRequests =
       <StreamChannel<List<int>>>[];
@@ -127,12 +127,12 @@ class ScreenRecorderHandler extends AbsAppHandler {
   Future<bool> _isPreviewing() async {
     var state = await _recordChannel.invokeMethod('state');
     Map data = state['data'] as Map;
-    bool previewing = data['previewing'];
-    return previewing;
+    bool? previewing = data['previewing'];
+    return previewing ?? false;
   }
 
   ///mjpeg流
-  Future<Response> _previewCgi(Request request, String name) async {
+  Future<Response?> _previewCgi(Request request, String name) async {
     debugPrint('previewCgi: $name');
     //check is previewing
     if (!await _isPreviewing()) {
@@ -183,7 +183,7 @@ class ScreenRecorderHandler extends AbsAppHandler {
   }
 
   ///发送图像给websocket
-  void _sendPreviewJpgToWs(Uint8List jpgBytes, WebSocketSink sink) {
+  void _sendPreviewJpgToWs(Uint8List? jpgBytes, WebSocketSink sink) {
     if (jpgBytes != null && jpgBytes is Uint8List && jpgBytes.length > 0) {
       BytesBuilder jpgBoundary = BytesBuilder(copy: true);
       jpgBoundary
@@ -198,7 +198,7 @@ class ScreenRecorderHandler extends AbsAppHandler {
 
   ///发送图像给cgi请求
   void _sendPreviewJpgToRequest(
-      Uint8List jpgBytes, StreamSink<List<int>> sink) {
+      Uint8List? jpgBytes, StreamSink<List<int>> sink) {
     if (jpgBytes != null && jpgBytes is Uint8List && jpgBytes.length > 0) {
       BytesBuilder jpgBoundary = BytesBuilder(copy: true);
 

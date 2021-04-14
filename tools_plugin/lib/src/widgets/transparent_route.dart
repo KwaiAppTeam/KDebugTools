@@ -34,9 +34,9 @@ const int _kMaxPageBackAnimationTime = 300; // Milliseconds.
 
 class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   TransparentCupertinoPageRoute({
-    @required this.builder,
+    required this.builder,
     this.title,
-    RouteSettings settings,
+    RouteSettings? settings,
     this.maintainState = true,
     bool fullscreenDialog = false,
   })  : assert(builder != null),
@@ -47,11 +47,11 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
 
   final WidgetBuilder builder;
 
-  final String title;
+  final String? title;
 
-  ValueNotifier<String> _previousTitle;
+  ValueNotifier<String?>? _previousTitle;
 
-  ValueListenable<String> get previousTitle {
+  ValueListenable<String?>? get previousTitle {
     assert(
       _previousTitle != null,
       'Cannot read the previousTitle for a route that has not yet been installed',
@@ -60,13 +60,13 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   }
 
   @override
-  void didChangePrevious(Route<dynamic> previousRoute) {
-    final String previousTitleString =
+  void didChangePrevious(Route<dynamic>? previousRoute) {
+    final String? previousTitleString =
         previousRoute is CupertinoPageRoute ? previousRoute.title : null;
     if (_previousTitle == null) {
-      _previousTitle = ValueNotifier<String>(previousTitleString);
+      _previousTitle = ValueNotifier<String?>(previousTitleString);
     } else {
-      _previousTitle.value = previousTitleString;
+      _previousTitle!.value = previousTitleString;
     }
     super.didChangePrevious(previousRoute);
   }
@@ -82,7 +82,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   Color get barrierColor => Colors.black26;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   @override
   bool get opaque => false;
@@ -93,7 +93,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   }
 
   static bool isPopGestureInProgress(PageRoute<dynamic> route) {
-    return route.navigator.userGestureInProgress;
+    return route.navigator!.userGestureInProgress;
   }
 
   bool get popGestureInProgress => isPopGestureInProgress(this);
@@ -105,8 +105,8 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     if (route.willHandlePopInternally) return false;
     if (route.hasScopedWillPopCallback) return false;
     if (route.fullscreenDialog) return false;
-    if (route.animation.status != AnimationStatus.completed) return false;
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed)
+    if (route.animation!.status != AnimationStatus.completed) return false;
+    if (route.secondaryAnimation!.status != AnimationStatus.dismissed)
       return false;
     if (isPopGestureInProgress(route)) return false;
 
@@ -140,8 +140,8 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     assert(_isPopGestureEnabled(route));
 
     return _CupertinoBackGestureController<T>(
-      navigator: route.navigator,
-      controller: route.controller, // protected access
+      navigator: route.navigator!,
+      controller: route.controller!, // protected access
     );
   }
 
@@ -187,10 +187,10 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
 
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    Key key,
-    @required this.enabledCallback,
-    @required this.onStartPopGesture,
-    @required this.child,
+    Key? key,
+    required this.enabledCallback,
+    required this.onStartPopGesture,
+    required this.child,
   })  : assert(enabledCallback != null),
         assert(onStartPopGesture != null),
         assert(child != null),
@@ -209,9 +209,9 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
 
 class _CupertinoBackGestureDetectorState<T>
     extends State<_CupertinoBackGestureDetector<T>> {
-  _CupertinoBackGestureController<T> _backGestureController;
+  _CupertinoBackGestureController<T>? _backGestureController;
 
-  HorizontalDragGestureRecognizer _recognizer;
+  late HorizontalDragGestureRecognizer _recognizer;
 
   @override
   void initState() {
@@ -238,15 +238,15 @@ class _CupertinoBackGestureDetectorState<T>
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragUpdate(
-        _convertToLogical(details.primaryDelta / context.size.width));
+    _backGestureController!.dragUpdate(
+        _convertToLogical(details.primaryDelta! / context.size!.width)!);
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragEnd(_convertToLogical(
-        details.velocity.pixelsPerSecond.dx / context.size.width));
+    _backGestureController!.dragEnd(_convertToLogical(
+        details.velocity.pixelsPerSecond.dx / context.size!.width)!);
     _backGestureController = null;
   }
 
@@ -260,7 +260,7 @@ class _CupertinoBackGestureDetectorState<T>
     if (widget.enabledCallback()) _recognizer.addPointer(event);
   }
 
-  double _convertToLogical(double value) {
+  double? _convertToLogical(double value) {
     switch (Directionality.of(context)) {
       case TextDirection.rtl:
         return -value;
@@ -298,8 +298,8 @@ class _CupertinoBackGestureDetectorState<T>
 
 class _CupertinoBackGestureController<T> {
   _CupertinoBackGestureController({
-    @required this.navigator,
-    @required this.controller,
+    required this.navigator,
+    required this.controller,
   })  : assert(navigator != null),
         assert(controller != null) {
     navigator.didStartUserGesture();
@@ -324,7 +324,7 @@ class _CupertinoBackGestureController<T> {
     if (animateForward) {
       final int droppedPageForwardAnimationTime = min(
         lerpDouble(
-                _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
+                _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)!
             .floor(),
         _kMaxPageBackAnimationTime,
       );
@@ -336,7 +336,7 @@ class _CupertinoBackGestureController<T> {
 
       if (controller.isAnimating) {
         final int droppedPageBackAnimationTime = lerpDouble(
-                0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
+                0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)!
             .floor();
         controller.animateBack(0.0,
             duration: Duration(milliseconds: droppedPageBackAnimationTime),
@@ -345,7 +345,7 @@ class _CupertinoBackGestureController<T> {
     }
 
     if (controller.isAnimating) {
-      AnimationStatusListener animationStatusCallback;
+      late AnimationStatusListener animationStatusCallback;
       animationStatusCallback = (AnimationStatus status) {
         navigator.didStopUserGesture();
         controller.removeStatusListener(animationStatusCallback);
@@ -363,11 +363,11 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
   static const _CupertinoEdgeShadowDecoration none =
       _CupertinoEdgeShadowDecoration();
 
-  final LinearGradient edgeGradient;
+  final LinearGradient? edgeGradient;
 
-  static _CupertinoEdgeShadowDecoration lerp(
-    _CupertinoEdgeShadowDecoration a,
-    _CupertinoEdgeShadowDecoration b,
+  static _CupertinoEdgeShadowDecoration? lerp(
+    _CupertinoEdgeShadowDecoration? a,
+    _CupertinoEdgeShadowDecoration? b,
     double t,
   ) {
     assert(t != null);
@@ -378,21 +378,21 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
   }
 
   @override
-  _CupertinoEdgeShadowDecoration lerpFrom(Decoration a, double t) {
+  _CupertinoEdgeShadowDecoration? lerpFrom(Decoration? a, double t) {
     if (a is _CupertinoEdgeShadowDecoration)
       return _CupertinoEdgeShadowDecoration.lerp(a, this, t);
     return _CupertinoEdgeShadowDecoration.lerp(null, this, t);
   }
 
   @override
-  _CupertinoEdgeShadowDecoration lerpTo(Decoration b, double t) {
+  _CupertinoEdgeShadowDecoration? lerpTo(Decoration? b, double t) {
     if (b is _CupertinoEdgeShadowDecoration)
       return _CupertinoEdgeShadowDecoration.lerp(this, b, t);
     return _CupertinoEdgeShadowDecoration.lerp(this, null, t);
   }
 
   @override
-  _CupertinoEdgeShadowPainter createBoxPainter([VoidCallback onChanged]) {
+  _CupertinoEdgeShadowPainter createBoxPainter([VoidCallback? onChanged]) {
     return _CupertinoEdgeShadowPainter(this, onChanged);
   }
 
@@ -417,7 +417,7 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
 class _CupertinoEdgeShadowPainter extends BoxPainter {
   _CupertinoEdgeShadowPainter(
     this._decoration,
-    VoidCallback onChange,
+    VoidCallback? onChange,
   )   : assert(_decoration != null),
         super(onChange);
 
@@ -425,20 +425,20 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    final LinearGradient gradient = _decoration.edgeGradient;
+    final LinearGradient? gradient = _decoration.edgeGradient;
     if (gradient == null) return;
-    final TextDirection textDirection = configuration.textDirection;
+    final TextDirection textDirection = configuration.textDirection!;
     assert(textDirection != null);
-    double deltaX;
+    late double deltaX;
     switch (textDirection) {
       case TextDirection.rtl:
-        deltaX = configuration.size.width;
+        deltaX = configuration.size!.width;
         break;
       case TextDirection.ltr:
-        deltaX = -configuration.size.width;
+        deltaX = -configuration.size!.width;
         break;
     }
-    final Rect rect = (offset & configuration.size).translate(deltaX, 0.0);
+    final Rect rect = (offset & configuration.size!).translate(deltaX, 0.0);
     final Paint paint = Paint()
       ..shader = gradient.createShader(rect, textDirection: textDirection);
 

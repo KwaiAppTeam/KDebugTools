@@ -45,7 +45,7 @@ class DeviceInfoHandler extends AbsAppHandler {
       AndroidDeviceInfo _androidInfo = await deviceInfo.androidInfo;
       dataCache['brand'] = _androidInfo.brand;
       dataCache['model'] = _androidInfo.model;
-      dataCache['version'] = _androidInfo.version?.release;
+      dataCache['version'] = _androidInfo.version.release;
       dataCache['identifier'] = _androidInfo.androidId;
       dataCache['extra'] = _buildExtra(androidInfo: _androidInfo);
     } else if (Platform.isIOS) {
@@ -64,21 +64,21 @@ class DeviceInfoHandler extends AbsAppHandler {
   }
 
   List<BaseKeyValue> _buildExtra(
-      {AndroidDeviceInfo androidInfo, IosDeviceInfo iosInfo}) {
-    List<BaseKeyValue> result = List<BaseKeyValue>();
+      {AndroidDeviceInfo? androidInfo, IosDeviceInfo? iosInfo}) {
+    List<BaseKeyValue> result = <BaseKeyValue>[];
     if (androidInfo != null) {
       result.add(BaseKeyValue('androidId', androidInfo.androidId));
       result.add(BaseKeyValue(
         'VERSION.sdkInt',
-        '${androidInfo.version?.sdkInt}',
+        '${androidInfo.version.sdkInt}',
       ));
       result.add(BaseKeyValue(
         'VERSION.codename',
-        '${androidInfo.version?.codename}',
+        '${androidInfo.version.codename}',
       ));
       result.add(BaseKeyValue(
         'VERSION.incremental',
-        '${androidInfo.version?.incremental}',
+        '${androidInfo.version.incremental}',
       ));
       result.add(BaseKeyValue(
         'fingerprint',
@@ -139,7 +139,7 @@ class DeviceInfoHandler extends AbsAppHandler {
   }
 
   List<BaseKeyValue> _buildWindowInfo(BuildContext context) {
-    List<BaseKeyValue> result = List<BaseKeyValue>();
+    List<BaseKeyValue> result = <BaseKeyValue>[];
     //window
     result.add(
         BaseKeyValue('devicePixelRatio', window.devicePixelRatio.toString()));
@@ -152,7 +152,7 @@ class DeviceInfoHandler extends AbsAppHandler {
   }
 
   List<BaseKeyValue> _buildPlatformInfo() {
-    List<BaseKeyValue> result = List<BaseKeyValue>();
+    List<BaseKeyValue> result = <BaseKeyValue>[];
     result.add(
         BaseKeyValue('numberOfProcessors', '${Platform.numberOfProcessors}'));
     result.add(BaseKeyValue('localeName', '${Platform.localeName}'));

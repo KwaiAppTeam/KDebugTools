@@ -30,24 +30,24 @@ abstract class AbsAppHandler {
     return headers;
   }
 
-  Response notFound({String msg}) {
+  Response notFound({String? msg}) {
     return Response.notFound(
         buildResponseBody(null, message: msg ?? 'Not Found', code: 404),
         headers: headers());
   }
 
-  Response error(String error) {
+  Response error(String? error) {
     return Response.internalServerError(
         body: buildResponseBody(null, message: error, code: 500),
         headers: headers());
   }
 
-  Response ok([Object data]) {
+  Response ok([Object? data]) {
     return Response.ok(buildResponseBody(data), headers: headers());
   }
 
-  static String buildResponseBody(Object data, {String message, int code}) {
-    Map<String, Object> resp = Map<String, Object>();
+  static String buildResponseBody(Object? data, {String? message, int? code}) {
+    Map<String, Object?> resp = Map<String, Object?>();
     resp['data'] = data;
     resp['message'] = message ?? 'success';
     resp['code'] = code ?? 200;

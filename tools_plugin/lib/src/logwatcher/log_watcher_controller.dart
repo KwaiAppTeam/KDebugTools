@@ -25,12 +25,12 @@ class LogWatcherController {
   static final LogWatcherController instance =
       LogWatcherController._privateConstructor();
 
-  DebugPrintCallback _originalDebugPrint;
+  DebugPrintCallback? _originalDebugPrint;
 
   ///默认不打开
-  bool _enable = false;
+  bool? _enable = false;
 
-  bool get enable => _enable;
+  bool? get enable => _enable;
 
   ///设置
   set enable(n) {
@@ -48,23 +48,23 @@ class LogWatcherController {
   void _updatePrint() {}
 
   void _updateDebugPrint() {
-    if (enable) {
+    if (enable!) {
       _originalDebugPrint = debugPrint;
-      debugPrint = (String message, {int wrapWidth}) {
+      debugPrint = (String? message, {int? wrapWidth}) {
         _sendToWeb(message, wrapWidth: wrapWidth);
 
         //send to original
         if (_originalDebugPrint != null) {
-          _originalDebugPrint(message, wrapWidth: wrapWidth);
+          _originalDebugPrint!(message, wrapWidth: wrapWidth);
         }
       };
     } else {
-      debugPrint = _originalDebugPrint;
+      debugPrint = _originalDebugPrint!;
       _originalDebugPrint = null;
     }
   }
 
-  void _sendToWeb(String message, {int wrapWidth}) {
+  void _sendToWeb(String? message, {int? wrapWidth}) {
     //注意这里面不能再调用 debugPrint
     LogEntry logEntry = LogEntry();
     logEntry.level = LogLevel.debug.index;
@@ -75,11 +75,11 @@ class LogWatcherController {
 
   ///会发送给web 并且本地debugPrint
   void customDebugPrint(String message) {
-    if (enable) {
+    if (enable!) {
       _sendToWeb(message);
       //send to original
       if (_originalDebugPrint != null) {
-        _originalDebugPrint(message);
+        _originalDebugPrint!(message);
       }
     } else {
       debugPrint(message);

@@ -43,7 +43,7 @@ class HttpClientResponseWrapper extends Stream<List<int>>
   List<RedirectInfo> get redirects => _realResponse.redirects;
 
   Future<HttpClientResponse> redirect(
-      [String method, Uri url, bool followLoops]) {
+      [String? method, Uri? url, bool? followLoops]) {
     return _realResponse.redirect(method, url, followLoops);
   }
 
@@ -55,13 +55,13 @@ class HttpClientResponseWrapper extends Stream<List<int>>
 
   List<Cookie> get cookies => _realResponse.cookies;
 
-  X509Certificate get certificate => _realResponse.certificate;
+  X509Certificate? get certificate => _realResponse.certificate;
 
-  HttpConnectionInfo get connectionInfo => _realResponse.connectionInfo;
+  HttpConnectionInfo? get connectionInfo => _realResponse.connectionInfo;
 
   @override
-  StreamSubscription<List<int>> listen(void Function(List<int> event) onData,
-      {Function onError, void Function() onDone, bool cancelOnError}) {
+  StreamSubscription<List<int>> listen(void Function(List<int> event)? onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     return _realResponse.transform(_ByteTransformer(this)).listen(onData,
         onDone: () {
       if (onDone != null) {
@@ -81,13 +81,13 @@ class _ByteTransformer extends StreamTransformerBase<List<int>, List<int>>
     implements EventSink<List<int>> {
   final HttpClientResponseWrapper responseWrapper;
   Uint8List _buffer = Uint8List(0);
-  EventSink<List<int>> _outSink;
+  EventSink<List<int>?>? _outSink;
 
   _ByteTransformer(this.responseWrapper);
 
   Stream<List<int>> bind(Stream<List<int>> stream) {
     return new Stream<List<int>>.eventTransformed(stream,
-        (EventSink<List<int>> sink) {
+        (EventSink<List<int>?> sink) {
       if (_outSink != null) {
         throw new StateError("ByteTransformer already used");
       }
@@ -101,16 +101,16 @@ class _ByteTransformer extends StreamTransformerBase<List<int>, List<int>>
     _buffer = Uint8List.fromList(_buffer + data);
   }
 
-  void addError(error, [StackTrace stackTrace]) {
-    _outSink.addError(error, stackTrace);
+  void addError(error, [StackTrace? stackTrace]) {
+    _outSink!.addError(error, stackTrace);
   }
 
   void close() async {
     //写入hook之后的数据
-    List<int> data = responseWrapper._httpHook
+    List<int>? data = responseWrapper._httpHook
         .hookResponseData(responseWrapper._realResponse, _buffer.toList());
     //限流
     await HttpThrottleController.instance.doDownTask(_outSink, data);
-    _outSink.close();
+    _outSink!.close();
   }
 }

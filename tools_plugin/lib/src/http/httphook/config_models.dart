@@ -15,8 +15,8 @@
 import 'dart:convert';
 
 class ConfigRecord {
-  int id;
-  String data;
+  int? id;
+  String? data;
 
   ConfigRecord.fromMap(Map map) {
     id = map['id'];
@@ -32,35 +32,35 @@ class ConfigRecord {
 }
 
 class HookConfig {
-  int id;
+  int? id;
 
   ///配置是否启用
-  bool enable = false;
+  bool? enable = false;
 
-  String uriPattern;
+  String? uriPattern;
 
   ///修改请求 之后会向服务器发出请求
-  bool modifyRequest = false;
-  String modifyRequestBody;
+  bool? modifyRequest = false;
+  String? modifyRequestBody;
 
   ///修改响应 会实际发出请求并收到响应后进行修改内容
-  bool modifyResponse = false;
-  String modifyResponseBody;
+  bool? modifyResponse = false;
+  String? modifyResponseBody;
 
   ///映射请求 之后会向映射地址发出请求
-  bool mapRemote = false;
+  bool? mapRemote = false;
 
   ///映射地址
-  String mapRemoteUrl;
+  String? mapRemoteUrl;
 
   ///映射请求到内容 之后会使用内容进行返回
-  bool mapLocal = false;
+  bool? mapLocal = false;
 
   ///映射内容
-  String mapLocalBody;
+  String? mapLocalBody;
 
   static HookConfig fromRecord(ConfigRecord element) {
-    HookConfig config = fromJson(jsonDecode(element.data));
+    HookConfig config = fromJson(jsonDecode(element.data!))!;
     config.id = element.id;
     return config;
   }
@@ -85,7 +85,7 @@ class HookConfig {
     return result;
   }
 
-  static HookConfig fromJson(Map<String, dynamic> result) {
+  static HookConfig? fromJson(Map<String, dynamic>? result) {
     if (result == null) {
       return null;
     }
@@ -113,11 +113,11 @@ class HookConfig {
 
 ///限流配置
 class ThrottleConfig {
-  bool limitUp = false;
-  bool limitDown = false;
+  bool? limitUp = false;
+  bool? limitDown = false;
 
-  int upKb = 50;
-  int downKb = 50;
+  int? upKb = 50;
+  int? downKb = 50;
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> result = Map<String, dynamic>();
@@ -128,7 +128,7 @@ class ThrottleConfig {
     return result;
   }
 
-  static ThrottleConfig fromJson(Map<String, dynamic> result) {
+  static ThrottleConfig? fromJson(Map<String, dynamic>? result) {
     if (result == null) {
       return null;
     }
@@ -142,7 +142,7 @@ class ThrottleConfig {
     return config;
   }
 
-  ThrottleConfig clone() {
+  ThrottleConfig? clone() {
     return fromJson(toJson());
   }
 }

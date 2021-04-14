@@ -49,7 +49,7 @@ class DbViewController {
       files.addAll(_scanDir(dir));
     });
     files.forEach((element) {
-      if (_dbFileMap[element.hashCode] == null) {
+      if (_dbFileMap[element.hashCode.toString()] == null) {
         registerDbFile(element);
       }
     });
@@ -58,7 +58,7 @@ class DbViewController {
 
   ///递归查询.db文件
   List<String> _scanDir(Directory dir) {
-    List<String> files = List<String>();
+    List<String> files = <String>[];
     dir.listSync().forEach((element) {
       if (element is File && element.path.toLowerCase().endsWith('.db')) {
         files.add(element.path);
@@ -86,15 +86,15 @@ class DbViewController {
   }
 
   ///执行sql
-  Future<ExecResult> executeSql(String id, String sqlStr) async {
+  Future<ExecResult?> executeSql(String id, String? sqlStr) async {
     if (_dbFileMap[id] == null) {
       return null;
     } else {
       ExecResult result = ExecResult();
-      result.sqlResult = List<SqlMessage>();
-      result.dataResult = List<List<Map>>();
-      DbController dbController = DbController(_dbFileMap[id].path);
-      List<String> sqls = sqlStr.split(';');
+      result.sqlResult = <SqlMessage>[];
+      result.dataResult = <List<Map>>[];
+      DbController dbController = DbController(_dbFileMap[id]!.path);
+      List<String> sqls = sqlStr!.split(';');
       for (String sql in sqls) {
         String formatSQL = sql.trim().toUpperCase();
         if (formatSQL.isEmpty) {
@@ -115,7 +115,7 @@ class DbViewController {
             msg = 'Affected rows: $rows';
           } else if (formatSQL.startsWith('SELECT')) {
             List<Map> data = await dbController.executeRawSelect(sql);
-            result.dataResult.add(data);
+            result.dataResult!.add(data);
             msg = 'OK';
           } else {
             await dbController.execute(sql);
@@ -125,7 +125,7 @@ class DbViewController {
           msg = '$e';
         }
         int et = DateTime.now().millisecondsSinceEpoch;
-        result.sqlResult
+        result.sqlResult!
             .add(SqlMessage(sql: sql, message: '$msg, Time: ${et - st}ms'));
       }
       dbController.close();
@@ -134,24 +134,24 @@ class DbViewController {
   }
 
   ///查询数据库表名
-  Future<List<String>> getDbTables(String id) async {
+  Future<List<String?>?> getDbTables(String id) async {
     if (_dbFileMap[id] == null) {
       return null;
     } else {
-      DbController dbController = DbController(_dbFileMap[id].path);
-      List<String> tables = await dbController.getTables();
+      DbController dbController = DbController(_dbFileMap[id]!.path);
+      List<String?> tables = await dbController.getTables();
       dbController.close();
       return tables;
     }
   }
 
   ///查询数据库表信息
-  Future<TableInfo> getDbTableInfo(String dbId, String tableName) async {
+  Future<TableInfo?> getDbTableInfo(String dbId, String tableName) async {
     if (_dbFileMap[dbId] == null) {
       return null;
     } else {
-      DbController dbController = DbController(_dbFileMap[dbId].path);
-      int count = await dbController.getCount(tableName);
+      DbController dbController = DbController(_dbFileMap[dbId]!.path);
+      int? count = await dbController.getCount(tableName);
       List<TableColumn> columns = await dbController.getTableColumns(tableName);
       dbController.close();
       return TableInfo(
@@ -160,12 +160,12 @@ class DbViewController {
   }
 
   ///查询数据库表数据
-  Future<List<Map>> getDbTableData(
+  Future<List<Map>?> getDbTableData(
       String dbId, String tableName, int offset, int limit) async {
     if (_dbFileMap[dbId] == null) {
       return null;
     } else {
-      DbController dbController = DbController(_dbFileMap[dbId].path);
+      DbController dbController = DbController(_dbFileMap[dbId]!.path);
       List<Map> data =
           await dbController.getTableData(tableName, offset, limit);
       dbController.close();
@@ -174,21 +174,21 @@ class DbViewController {
   }
 
   ///删除表数据
-  Future<ExecResult> deleteTableData(
-      String dbId, String tableName, String pk, List<String> keys) async {
+  Future<ExecResult?> deleteTableData(
+      String dbId, String tableName, String? pk, List<String> keys) async {
     if (_dbFileMap[dbId] == null) {
       return null;
     } else {
       int st = DateTime.now().millisecondsSinceEpoch;
-      DbController dbController = DbController(_dbFileMap[dbId].path);
+      DbController dbController = DbController(_dbFileMap[dbId]!.path);
       ExecResult result = ExecResult();
-      result.sqlResult = List<SqlMessage>();
-      result.dataResult = List<List<Map>>();
+      result.sqlResult = <SqlMessage>[];
+      result.dataResult = <List<Map>>[];
       int rows = await dbController.executeDelete(
           tableName, '$pk in (${keys.map((e) => '?').join(',')})', keys);
       String msg = 'Affected rows: $rows';
       int et = DateTime.now().millisecondsSinceEpoch;
-      result.sqlResult
+      result.sqlResult!
           .add(SqlMessage(sql: '', message: '$msg, Time: ${et - st}ms'));
       dbController.close();
       return result;
@@ -196,21 +196,21 @@ class DbViewController {
   }
 
   ///更新表数据
-  Future<ExecResult> updateTableData(String dbId, String tableName, String pk,
-      String pkValue, Map values) async {
+  Future<ExecResult?> updateTableData(String dbId, String tableName, String? pk,
+      String? pkValue, Map? values) async {
     if (_dbFileMap[dbId] == null) {
       return null;
     } else {
       int st = DateTime.now().millisecondsSinceEpoch;
-      DbController dbController = DbController(_dbFileMap[dbId].path);
+      DbController dbController = DbController(_dbFileMap[dbId]!.path);
       ExecResult result = ExecResult();
-      result.sqlResult = List<SqlMessage>();
-      result.dataResult = List<List<Map>>();
+      result.sqlResult = <SqlMessage>[];
+      result.dataResult = <List<Map>>[];
       int rows = await dbController
-          .executeUpdate(tableName, values, '$pk = ?', [pkValue]);
+          .executeUpdate(tableName, values!, '$pk = ?', [pkValue]);
       String msg = 'Affected rows: $rows';
       int et = DateTime.now().millisecondsSinceEpoch;
-      result.sqlResult
+      result.sqlResult!
           .add(SqlMessage(sql: '', message: '$msg, Time: ${et - st}ms'));
       dbController.close();
       return result;

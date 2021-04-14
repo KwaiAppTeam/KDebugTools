@@ -74,8 +74,9 @@ class HttpHookHandler extends AbsAppHandler {
 
   ///限速配置
   Future<Response> _throttle(Request request) async {
-    Map body = jsonDecode(await request.readAsString());
-    ThrottleConfig config = ThrottleConfig.fromJson(body);
+    Map? body = jsonDecode(await request.readAsString());
+    ThrottleConfig config =
+        ThrottleConfig.fromJson(body as Map<String, dynamic>?)!;
     HttpThrottleController.instance
         .setLimitDownload(config.limitDown, config.downKb);
     HttpThrottleController.instance.setLimitUpload(config.limitUp, config.upKb);
@@ -98,23 +99,23 @@ class HttpHookHandler extends AbsAppHandler {
   }
 
   Future<Response> _delete(Request request) async {
-    Map body = jsonDecode(await request.readAsString());
-    HookConfig config = HookConfig.fromJson(body);
+    Map? body = jsonDecode(await request.readAsString());
+    HookConfig config = HookConfig.fromJson(body as Map<String, dynamic>?)!;
     int rows = await HttpHookController.instance.delete(config.id);
     return ok(rows);
   }
 
   Future<Response> _update(Request request) async {
-    Map body = jsonDecode(await request.readAsString());
-    HookConfig config = HookConfig.fromJson(body);
+    Map? body = jsonDecode(await request.readAsString());
+    HookConfig config = HookConfig.fromJson(body as Map<String, dynamic>?)!;
     int rows = await HttpHookController.instance.update(config);
     return ok(rows);
   }
 
   Future<Response> _add(Request request) async {
-    Map body = jsonDecode(await request.readAsString());
-    HookConfig config = HookConfig.fromJson(body);
-    int rows = await HttpHookController.instance.add(config);
-    return ok(rows);
+    Map? body = jsonDecode(await request.readAsString());
+    HookConfig? config = HookConfig.fromJson(body as Map<String, dynamic>?);
+    int id = await HttpHookController.instance.add(config);
+    return ok(id);
   }
 }

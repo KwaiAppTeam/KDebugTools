@@ -31,9 +31,9 @@ import '../handler_def.dart';
 
 ///用于UI检查 提供flutter截图 widget数获取等功能
 class UiCheckHandler extends AbsAppHandler {
-  Uint8List _screenshotPngBytes;
-  double _screenHeight;
-  double _screenWidth;
+  Uint8List? _screenshotPngBytes;
+  double? _screenHeight;
+  double? _screenWidth;
 
   @override
   shelf.Router get router {
@@ -67,12 +67,12 @@ class UiCheckHandler extends AbsAppHandler {
   }
 
   ///flutter widget截屏方法
-  Future<Uint8List> _captureScreen() async {
+  Future<Uint8List?> _captureScreen() async {
     try {
       var boundary = await _findRenderRepaintBoundary();
-      var image = await boundary.toImage(pixelRatio: window.devicePixelRatio);
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
+      var image = await boundary!.toImage(pixelRatio: window.devicePixelRatio);
+      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
       return pngBytes;
     } catch (e) {
       debugPrint('capture error: $e');
@@ -80,16 +80,16 @@ class UiCheckHandler extends AbsAppHandler {
     return null;
   }
 
-  Future<RenderRepaintBoundary> _findRenderRepaintBoundary() async {
+  Future<RenderRepaintBoundary?> _findRenderRepaintBoundary() async {
     //有指定RenderRepaintBoundary
     if (Debugger.instance.rootRepaintBoundaryKey?.currentContext != null) {
-      return Debugger.instance.rootRepaintBoundaryKey.currentContext
-          .findRenderObject();
+      return Debugger.instance.rootRepaintBoundaryKey!.currentContext!
+          .findRenderObject() as RenderRepaintBoundary;
     }
 
     ///递归寻找
-    RenderRepaintBoundary find(Element e) {
-      RenderRepaintBoundary boundary;
+    RenderRepaintBoundary? find(BuildContext e) {
+      RenderRepaintBoundary? boundary;
       var b = e.findRenderObject();
       if (b is RenderRepaintBoundary) {
         boundary = b;
@@ -105,7 +105,8 @@ class UiCheckHandler extends AbsAppHandler {
     }
 
     //未指定,找最近一个
-    RenderRepaintBoundary boundary = find(await Debugger.instance.appContext.future);
+    RenderRepaintBoundary? boundary =
+        find(await Debugger.instance.appContext.future);
 
     return boundary;
   }
@@ -125,7 +126,7 @@ class UiCheckHandler extends AbsAppHandler {
     String hash = DateTime.now().millisecondsSinceEpoch.toString();
     var headers = {
       'Access-Control-Allow-Origin': '*',
-      HttpHeaders.contentLengthHeader: _screenshotPngBytes.length.toString(),
+      HttpHeaders.contentLengthHeader: _screenshotPngBytes!.length.toString(),
       HttpHeaders.contentTypeHeader: 'image/png',
       HttpHeaders.lastModifiedHeader: formatHttpDate(DateTime.now()),
       HttpHeaders.contentMD5Header: hash,
@@ -141,7 +142,7 @@ class UiCheckHandler extends AbsAppHandler {
   FutureOr<WidgetNode> _buildTree() async {
     WidgetNode node;
     int count = 0;
-    Element rootElement;
+    late Element rootElement;
     BuildContext ctx = await Debugger.instance.appContext.future;
     ctx.visitChildElements((element) {
       count++;
@@ -158,30 +159,30 @@ class UiCheckHandler extends AbsAppHandler {
   }
 
   List<ModalRoute> _findVisibleModalRoute(Element root) {
-    Map<NavigatorState, List<ModalRoute>> visibleRoutesMap =
-        Map<NavigatorState, List<ModalRoute>>();
-    Map<NavigatorState, List<ModalRoute>> inVisibleRoutesMap =
-        Map<NavigatorState, List<ModalRoute>>();
+    Map<NavigatorState?, List<ModalRoute>> visibleRoutesMap =
+        Map<NavigatorState?, List<ModalRoute>>();
+    Map<NavigatorState?, List<ModalRoute>> inVisibleRoutesMap =
+        Map<NavigatorState?, List<ModalRoute>>();
 
     void visitModalRoute(Element visitE) {
       if (visitE.widget is RenderObjectWidget) {
-        ModalRoute route = ModalRoute.of(visitE);
+        ModalRoute? route = ModalRoute.of(visitE);
         if (route != null) {
-          visibleRoutesMap[route.navigator] ??= List<ModalRoute>();
-          inVisibleRoutesMap[route.navigator] ??= List<ModalRoute>();
-          if (inVisibleRoutesMap[route.navigator].contains(route)) {
+          visibleRoutesMap[route.navigator] ??= <ModalRoute>[];
+          inVisibleRoutesMap[route.navigator] ??= <ModalRoute>[];
+          if (inVisibleRoutesMap[route.navigator]!.contains(route)) {
             return;
           }
-          if (!visibleRoutesMap[route.navigator].contains(route)) {
-            visibleRoutesMap[route.navigator].add(route);
+          if (!visibleRoutesMap[route.navigator]!.contains(route)) {
+            visibleRoutesMap[route.navigator]!.add(route);
           }
           //if (route.opaque) { //todo 一些透明的page上不透明的元素应该也要覆盖底下的元素 目前只显示最顶的page元素
           //set pre route inVisible
-          visibleRoutesMap[route.navigator].removeWhere((element) {
-            if (!inVisibleRoutesMap[route.navigator].contains(element) &&
+          visibleRoutesMap[route.navigator]!.removeWhere((element) {
+            if (!inVisibleRoutesMap[route.navigator]!.contains(element) &&
                 element != route) {
 //              debugPrint('set inVisible $element, current: $route');
-              inVisibleRoutesMap[route.navigator].add(element);
+              inVisibleRoutesMap[route.navigator]!.add(element);
             }
             return element != route;
           });
@@ -195,7 +196,7 @@ class UiCheckHandler extends AbsAppHandler {
 
     visitModalRoute(root);
 
-    List<ModalRoute> all = List<ModalRoute>();
+    List<ModalRoute> all = <ModalRoute>[];
     visibleRoutesMap.forEach((key, value) {
       all.addAll(value);
     });
@@ -210,10 +211,10 @@ class UiCheckHandler extends AbsAppHandler {
 
     ///递归查找子节点
     List<WidgetNode> buildNodes(Element e, int dep) {
-      List<WidgetNode> sub = List<WidgetNode>();
+      List<WidgetNode> sub = <WidgetNode>[];
       if (e.widget is RenderObjectWidget) {
         //filter by page visible
-        ModalRoute route = ModalRoute.of(e);
+        ModalRoute? route = ModalRoute.of(e);
         if (route != null && !allVisibleModalRoute.contains(route)) {
           //not visible
 //            debugPrint('not visible: ${e.toString()}');
@@ -221,11 +222,11 @@ class UiCheckHandler extends AbsAppHandler {
         }
       }
       //filter by self opacity
-      if (e?.renderObject is RenderAnimatedOpacity &&
+      if (e.renderObject is RenderAnimatedOpacity &&
           (e.renderObject as RenderAnimatedOpacity).opacity.value == 0) {
         return sub;
       }
-      if (e?.renderObject is RenderOpacity &&
+      if (e.renderObject is RenderOpacity &&
           (e.renderObject as RenderOpacity).opacity == 0) {
         return sub;
       }
@@ -260,7 +261,7 @@ class UiCheckHandler extends AbsAppHandler {
         WidgetNode node = WidgetNode(name: e.widget.runtimeType.toString());
         _fillProperties(e, node);
         DecoratedBox box = e.widget as DecoratedBox;
-        node.attrs = {'decoration': box.decoration?.toString()};
+        node.attrs = {'decoration': box.decoration.toString()};
         sub.add(node);
       } else if (e.widget is Visibility && !(e.widget as Visibility).visible) {
         //child not visible
@@ -275,21 +276,20 @@ class UiCheckHandler extends AbsAppHandler {
         e.visitChildElements((element) {
           var thisSubs = buildNodes(element, dep + 1);
           sub.addAll(thisSubs);
-          return true;
         });
       }
       // filter by position
       sub.removeWhere((element) {
-        if (element.top + element.height < 0) {
+        if (element.top! + element.height! < 0) {
           return true;
         }
-        if (element.top > _screenHeight) {
+        if (element.top! > _screenHeight!) {
           return true;
         }
-        if (element.left + element.width < 0) {
+        if (element.left! + element.width! < 0) {
           return true;
         }
-        if (element.left > _screenWidth) {
+        if (element.left! > _screenWidth!) {
           return true;
         }
         return false;
@@ -305,7 +305,7 @@ class UiCheckHandler extends AbsAppHandler {
   void _fillProperties(Element e, WidgetNode node) {
     node.width = e.size?.width ?? 0;
     node.height = e.size?.height ?? 0;
-    RenderObject renderObject = e.findRenderObject();
+    RenderObject? renderObject = e.findRenderObject();
     if (renderObject is RenderBox) {
       var offset = renderObject.localToGlobal(Offset.zero);
       node.top = offset.dy;
@@ -313,8 +313,8 @@ class UiCheckHandler extends AbsAppHandler {
     }
     if (node.top == null ||
         node.left == null ||
-        node.top.isNaN ||
-        node.left.isNaN) {
+        node.top!.isNaN ||
+        node.left!.isNaN) {
       node.width = node.height = node.top = node.left = 0;
     }
   }
@@ -324,27 +324,27 @@ class UiCheckHandler extends AbsAppHandler {
     RawImage image = e.widget as RawImage;
     WidgetNode node = WidgetNode(name: 'RawImage');
     node.attrs = Map<String, dynamic>();
-    node.attrs['image'] = image.image?.toString();
-    node.attrs['alignment'] = image.alignment?.toString();
-    node.attrs['invertColors'] = image.invertColors;
-    node.attrs['filterQuality'] = image.filterQuality?.toString();
-    node.attrs['fit'] = image.fit?.toString();
+    node.attrs!['image'] = image.image?.toString();
+    node.attrs!['alignment'] = image.alignment.toString();
+    node.attrs!['invertColors'] = image.invertColors;
+    node.attrs!['filterQuality'] = image.filterQuality.toString();
+    node.attrs!['fit'] = image.fit?.toString();
     return node;
   }
 
   ///文本
   WidgetNode buildTextSpanRichText(Element e) {
     RichText richText = e.widget as RichText;
-    TextSpan textSpan = richText.text;
+    TextSpan textSpan = richText.text as TextSpan;
     WidgetNode node =
         WidgetNode(name: 'TextSpan', data: textSpan.toPlainText());
     if (richText.text.style != null) {
       node.attrs = Map<String, dynamic>();
-      node.attrs['color'] = richText.text.style.color?.toString();
-      node.attrs['family'] = richText.text.style.fontFamily;
-      node.attrs['size'] = richText.text.style.fontSize;
-      node.attrs['weight'] = richText.text.style.fontWeight.toString();
-      node.attrs['baseline'] = richText.text.style.textBaseline?.toString();
+      node.attrs!['color'] = richText.text.style!.color?.toString();
+      node.attrs!['family'] = richText.text.style!.fontFamily;
+      node.attrs!['size'] = richText.text.style!.fontSize;
+      node.attrs!['weight'] = richText.text.style!.fontWeight.toString();
+      node.attrs!['baseline'] = richText.text.style!.textBaseline?.toString();
     }
     return node;
   }

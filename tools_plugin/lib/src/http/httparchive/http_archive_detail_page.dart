@@ -36,7 +36,7 @@ class _HttpArchiveDetailPageState extends State<HttpArchiveDetailPage>
     new Tab(text: "response"),
   ];
 
-  PageController _pageController;
+  PageController? _pageController;
 
   int currentIndex = 0;
 
@@ -48,7 +48,7 @@ class _HttpArchiveDetailPageState extends State<HttpArchiveDetailPage>
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _pageController!.dispose();
     super.dispose();
   }
 
@@ -106,7 +106,7 @@ class _HttpArchiveDetailPageState extends State<HttpArchiveDetailPage>
   }
 
   void _bottomTap(int value) {
-    _pageController.animateToPage(value,
+    _pageController!.animateToPage(value,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 }

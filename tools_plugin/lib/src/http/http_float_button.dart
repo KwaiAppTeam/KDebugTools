@@ -17,13 +17,13 @@ import 'package:k_debug_tools/k_debug_tools.dart';
 
 import 'httphook/http_throttle_controller.dart';
 
-OverlayEntry _itemEntry;
+OverlayEntry? _itemEntry;
 
 showHttpFloatBtn() async {
   if (_itemEntry == null) {
-    OverlayState rootOverlay;
-    OverlayState findOverlay(BuildContext ctx) {
-      OverlayState ret = Overlay.of(ctx, rootOverlay: true);
+    OverlayState? rootOverlay;
+    OverlayState? findOverlay(BuildContext ctx) {
+      OverlayState? ret = Overlay.of(ctx, rootOverlay: true);
       if (ret == null) {
         ctx.visitChildElements((element) {
           if (ret == null) {
@@ -38,7 +38,7 @@ showHttpFloatBtn() async {
     if (rootOverlay != null) {
       _itemEntry =
           OverlayEntry(builder: (BuildContext context) => HttpButtonWidget());
-      rootOverlay.insert(_itemEntry);
+      rootOverlay.insert(_itemEntry!);
     }
   }
 }
@@ -53,13 +53,13 @@ class HttpButtonWidget extends StatefulWidget {
   _HttpButtonWidgetState createState() => _HttpButtonWidgetState();
 }
 
-double _left;
+double? _left;
 
-double _top;
+double? _top;
 
 class _HttpButtonWidgetState extends State<HttpButtonWidget> {
-  double screenWidth;
-  double screenHeight;
+  double? screenWidth;
+  late double screenHeight;
   double width = 70;
   double height = 30;
 
@@ -103,7 +103,7 @@ class _HttpButtonWidgetState extends State<HttpButtonWidget> {
                       ValueListenableBuilder(
                           valueListenable:
                               HttpThrottleController.instance.totalUp,
-                          builder: (ctx, up, _) {
+                          builder: (ctx, dynamic up, _) {
                             return Text(
                                 '${(up / 1024 / 1024).toStringAsFixed(3)}MB');
                           })
@@ -118,7 +118,7 @@ class _HttpButtonWidgetState extends State<HttpButtonWidget> {
                       ValueListenableBuilder(
                           valueListenable:
                               HttpThrottleController.instance.totalDown,
-                          builder: (ctx, down, _) {
+                          builder: (ctx, dynamic down, _) {
                             return Text(
                                 '${(down / 1024 / 1024).toStringAsFixed(3)}MB');
                           })
@@ -132,21 +132,21 @@ class _HttpButtonWidgetState extends State<HttpButtonWidget> {
       ),
     );
 
-    if (_left < 1) {
+    if (_left! < 1) {
       _left = 1;
     }
-    if (_left > screenWidth - width) {
-      _left = screenWidth - width;
+    if (_left! > screenWidth! - width) {
+      _left = screenWidth! - width;
     }
-    if (_top < 1) {
+    if (_top! < 1) {
       _top = 1;
     }
-    if (_top > screenHeight - height) {
+    if (_top! > screenHeight - height) {
       _top = screenHeight - height;
     }
     w = Container(
       alignment: Alignment.topLeft,
-      margin: EdgeInsets.only(left: _left, top: _top),
+      margin: EdgeInsets.only(left: _left!, top: _top!),
       child: w,
     );
     return w;
@@ -154,8 +154,8 @@ class _HttpButtonWidgetState extends State<HttpButtonWidget> {
 
   _dragUpdate(DragUpdateDetails detail) {
     Offset offset = detail.delta;
-    _left = _left + offset.dx;
-    _top = _top + offset.dy;
+    _left = _left! + offset.dx;
+    _top = _top! + offset.dy;
     setState(() {});
   }
 }

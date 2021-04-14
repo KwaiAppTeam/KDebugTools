@@ -37,14 +37,14 @@ String _methodFilter = '';
 String _urlFilter = '';
 
 class _HttpArchiveListPageState extends State<HttpArchiveListPage> {
-  TextEditingController _filterEditingController;
+  TextEditingController? _filterEditingController;
 
   @override
   void initState() {
     _filterEditingController = TextEditingController();
-    _filterEditingController.text = _urlFilter;
-    _filterEditingController.addListener(() {
-      _urlFilter = _filterEditingController.text;
+    _filterEditingController!.text = _urlFilter;
+    _filterEditingController!.addListener(() {
+      _urlFilter = _filterEditingController!.text;
       setState(() {});
     });
     super.initState();
@@ -58,10 +58,10 @@ class _HttpArchiveListPageState extends State<HttpArchiveListPage> {
         '$hookConfigCount ${localizationOptions.rules} / ${_archives.length} ${localizationOptions.records}';
     var filteredArchives = _archives.where((element) {
       var urlFilter = _urlFilter.toLowerCase();
-      var methodFilter = _methodFilter?.toLowerCase() ?? '';
-      var method = element.method.toLowerCase();
+      var methodFilter = _methodFilter.toLowerCase();
+      var method = element.method!.toLowerCase();
       bool urlF =
-          urlFilter.isEmpty || element.url.toLowerCase().contains(urlFilter);
+          urlFilter.isEmpty || element.url!.toLowerCase().contains(urlFilter);
       bool methodF = methodFilter.isEmpty ||
           method == methodFilter ||
           (methodFilter == 'other' && method != 'post' && method != 'get');
@@ -82,7 +82,7 @@ class _HttpArchiveListPageState extends State<HttpArchiveListPage> {
             },
             child: ValueListenableBuilder(
               valueListenable: HttpHookController.instance.enableHook,
-              builder: (ctx, value, _) {
+              builder: (ctx, bool value, _) {
                 return SizedBox(
                   width: 36,
                   height: 36,
@@ -203,7 +203,7 @@ class _HttpArchiveListPageState extends State<HttpArchiveListPage> {
   Widget _buildItem(HttpArchive item) {
     ///格式化请求时间
     var requestTime =
-        getTimeStr(DateTime.fromMillisecondsSinceEpoch(item.start));
+        getTimeStr(DateTime.fromMillisecondsSinceEpoch(item.start!));
     var duration = (item.end ?? 0) - (item.start ?? 0);
     duration = max(duration, 0);
     //todo 被修改的、错误的使用不同颜色区分
@@ -222,7 +222,7 @@ class _HttpArchiveListPageState extends State<HttpArchiveListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              '${item.statusCode} / ${item.method.toUpperCase()} / $requestTime / ${duration}ms / ${((item.responseLength ?? 0) / 1024).toStringAsFixed(3)}KB',
+              '${item.statusCode} / ${item.method!.toUpperCase()} / $requestTime / ${duration}ms / ${((item.responseLength ?? 0) / 1024).toStringAsFixed(3)}KB',
               style: TextStyle(
                 color: textColor,
               ),
@@ -275,7 +275,7 @@ bool isJsonStr(String data) {
   }
 }
 
-Map<String, dynamic> stripValue(Map<String, List<String>> map) {
+Map<String, dynamic>? stripValue(Map<String, List<String>>? map) {
   return map?.map((key, value) {
     return MapEntry(
         key, value.isEmpty ? null : (value.length == 1 ? value.first : value));

@@ -70,9 +70,9 @@ class DbViewHandler extends AbsAppHandler {
   ///数据库sql
   Future<Response> _dbExecute(Request request, String id) async {
     Map body = jsonDecode(await request.readAsString());
-    String sql = body['sql'];
+    String? sql = body['sql'];
     try {
-      ExecResult result = await DbViewController.instance.executeSql(id, sql);
+      ExecResult? result = await DbViewController.instance.executeSql(id, sql);
       return ok(result);
     } catch (e) {
       return error(e.toString());
@@ -82,7 +82,7 @@ class DbViewHandler extends AbsAppHandler {
   ///扫描文件
   Future<Response> _scan(Request request) async {
     if (_scanning) {
-      return error('still scaning');
+      return error('still scanning');
     }
     _scanning = true;
     Completer<Response> completer = Completer<Response>();
@@ -90,6 +90,7 @@ class DbViewHandler extends AbsAppHandler {
       _scanning = false;
       completer.complete(ok(DbViewController.instance.dbFiles));
     }).catchError((e) {
+      debugPrint('$e');
       _scanning = false;
       completer.completeError(error('$e'));
     });
@@ -99,7 +100,7 @@ class DbViewHandler extends AbsAppHandler {
   ///表信息查询
   Future<Response> _dbTableInfo(
       Request request, String id, String table) async {
-    TableInfo tbInfo =
+    TableInfo? tbInfo =
         await DbViewController.instance.getDbTableInfo(id, table);
     return ok(tbInfo);
   }
@@ -111,13 +112,13 @@ class DbViewHandler extends AbsAppHandler {
     int limit = 100;
     if (request.url.hasQuery) {
       if (request.url.queryParameters['offset']?.isNotEmpty == true) {
-        offset = int.parse(request.url.queryParameters['offset']);
+        offset = int.parse(request.url.queryParameters['offset']!);
       }
       if (request.url.queryParameters['limit']?.isNotEmpty == true) {
-        limit = int.parse(request.url.queryParameters['limit']);
+        limit = int.parse(request.url.queryParameters['limit']!);
       }
     }
-    List<Map> data = await DbViewController.instance
+    List<Map>? data = await DbViewController.instance
         .getDbTableData(id, table, offset, limit);
     return ok(data);
   }
@@ -126,10 +127,10 @@ class DbViewHandler extends AbsAppHandler {
   Future<Response> _dbTableDelete(
       Request request, String id, String table) async {
     Map body = jsonDecode(await request.readAsString());
-    String pk = body['pk'];
+    String? pk = body['pk'];
     List<String> keys = (body['keys'] as List).cast<String>();
     debugPrint('_dbTableDelete: delete from $table where $pk in ($keys)');
-    ExecResult result =
+    ExecResult? result =
         await DbViewController.instance.deleteTableData(id, table, pk, keys);
     return ok(result);
   }
@@ -138,10 +139,10 @@ class DbViewHandler extends AbsAppHandler {
   Future<Response> _dbTableUpdate(
       Request request, String id, String table) async {
     Map body = jsonDecode(await request.readAsString());
-    String pk = body['pk'];
-    String pkValue = body['pkValue'];
-    Map newValues = body['newValues'];
-    ExecResult result = await DbViewController.instance
+    String? pk = body['pk'];
+    String? pkValue = body['pkValue'];
+    Map? newValues = body['newValues'];
+    ExecResult? result = await DbViewController.instance
         .updateTableData(id, table, pk, pkValue, newValues);
     return ok(result);
   }

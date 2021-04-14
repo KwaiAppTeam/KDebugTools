@@ -29,7 +29,7 @@ class FileExplorerPage extends StatefulWidget {
 }
 
 class _FileExplorerPageState extends State<FileExplorerPage> {
-  final List<FileModel> _history = List<FileModel>();
+  final List<FileModel> _history = <FileModel>[];
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<FileModel> subs = _history.isNotEmpty ? _history.last.subFiles : null;
+    List<FileModel>? subs = _history.isNotEmpty ? _history.last.subFiles : null;
     return Column(
       children: <Widget>[
         Visibility(
@@ -94,7 +94,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
             padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
             itemCount: subs?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
-              return _buildItemWidget(subs.elementAt(index));
+              return _buildItemWidget(subs!.elementAt(index));
             },
             separatorBuilder: (BuildContext context, int index) {
               return Divider(height: 1, color: Color(0xff000000));
@@ -107,7 +107,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
               padding: EdgeInsets.all(2),
               width: double.infinity,
               color: Colors.black12,
-              child: Text(_history.isNotEmpty ? _history.last.absolute : '')),
+              child: Text(_history.isNotEmpty ? _history.last.absolute! : '')),
         ),
       ],
     );
@@ -115,10 +115,10 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
 
   ///重新加载当前文件夹内容
   void _reloadCurrentSubs() async {
-    if (_history.isNotEmpty && _history.last.absolute.isNotEmpty) {
-      List<FileModel> files = List<FileModel>();
+    if (_history.isNotEmpty && _history.last.absolute!.isNotEmpty) {
+      List<FileModel> files = <FileModel>[];
       _history.last.subFiles = files;
-      Directory dir = Directory(_history.last.absolute);
+      Directory dir = Directory(_history.last.absolute!);
       try {
         dir.listSync().forEach((element) {
           String name =
@@ -148,9 +148,14 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
   void _onLongPress(FileModel f) {
     if (!f.readOnly) {
       //弹出上下文菜单
-      showContextMenuDialog(context, <String>[localizationOptions.fileOpen,
-        localizationOptions.fileRename,
-        localizationOptions.fileDelete], title: f.name)
+      showContextMenuDialog(
+              context,
+              <String>[
+                localizationOptions.fileOpen,
+                localizationOptions.fileRename,
+                localizationOptions.fileDelete
+              ],
+              title: f.name)
           .then((index) {
         if (index != null) {
           debugPrint('ContextMenu $index clicked');
@@ -161,19 +166,20 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
             case 1:
               //弹出重命名对话框
               showInputDialog(context,
-                      title: '${localizationOptions.fileRename} ${f.name}', initValue: f.name)
+                      title: '${localizationOptions.fileRename} ${f.name}',
+                      initValue: f.name!)
                   .then((str) {
                 debugPrint('Rename input $str');
                 if (str != null && str.isNotEmpty && f.name != str) {
-                  String newpath =
-                      f.absolute.substring(0, f.absolute.lastIndexOf('/') + 1) +
-                          str;
+                  String newpath = f.absolute!
+                          .substring(0, f.absolute!.lastIndexOf('/') + 1) +
+                      str;
                   debugPrint('Rename to $newpath');
                   try {
                     if (f.isDir) {
-                      Directory(f.absolute).renameSync(newpath);
+                      Directory(f.absolute!).renameSync(newpath);
                     } else {
-                      File(f.absolute).renameSync(newpath);
+                      File(f.absolute!).renameSync(newpath);
                     }
                     _reloadCurrentSubs();
                   } catch (e) {
@@ -184,11 +190,11 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
               });
               break;
             case 2:
-              bool isDir = FileSystemEntity.isDirectorySync(f.absolute);
+              bool isDir = FileSystemEntity.isDirectorySync(f.absolute!);
               if (isDir) {
-                Directory(f.absolute).deleteSync(recursive: true);
+                Directory(f.absolute!).deleteSync(recursive: true);
               } else {
-                File(f.absolute).deleteSync(recursive: true);
+                File(f.absolute!).deleteSync(recursive: true);
               }
               _reloadCurrentSubs();
               Toast.showToast(localizationOptions.fileDeleteSuccess);
@@ -264,7 +270,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
 
 ///所有可用目录
 Future<List<FileModel>> listAllDirs() async {
-  List<FileModel> all = List<FileModel>();
+  List<FileModel> all = <FileModel>[];
   if (Platform.isAndroid) {
     final appDir = await getApplicationSupportDirectory();
     all.add(FileModel(
@@ -272,18 +278,20 @@ Future<List<FileModel>> listAllDirs() async {
         type: 'dir',
         readOnly: true,
         absolute: appDir.path.substring(0, appDir.path.lastIndexOf('/'))));
-    final exAppDir = await getExternalStorageDirectory();
-    List<String> ps = exAppDir.path.split('/');
-    all.add(FileModel(
-        name: 'ExtAppDir',
-        type: 'dir',
-        readOnly: true,
-        absolute: ps.sublist(0, ps.length - 1).join('/')));
-    all.add(FileModel(
-        name: 'ExtRoot',
-        type: 'dir',
-        readOnly: true,
-        absolute: ps.sublist(0, ps.length - 4).join('/')));
+    final exAppDir = await (getExternalStorageDirectory());
+    if (exAppDir != null) {
+      List<String> ps = exAppDir.path.split('/');
+      all.add(FileModel(
+          name: 'ExtAppDir',
+          type: 'dir',
+          readOnly: true,
+          absolute: ps.sublist(0, ps.length - 1).join('/')));
+      all.add(FileModel(
+          name: 'ExtRoot',
+          type: 'dir',
+          readOnly: true,
+          absolute: ps.sublist(0, ps.length - 4).join('/')));
+    }
   } else {
     //ios
     final docDir = await getApplicationDocumentsDirectory();

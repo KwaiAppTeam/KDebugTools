@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -36,12 +36,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  Timer? _logTimer;
+
   @override
   void initState() {
     super.initState();
     //auto show Debugger icon
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       Debugger.instance.showDebugger(context);
+    });
+    _logTimer?.cancel();
+    _logTimer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+      debugPrint('debug print log...');
     });
   }
 
@@ -60,7 +66,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       Debugger.instance.showDebuggerDialog(ctx);
                     },
@@ -69,14 +75,16 @@ class _MyAppState extends State<MyApp> {
                   SizedBox(
                     height: 10,
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
+                      debugPrint('request start');
                       HttpClient()
                           .getUrl(Uri.parse('https://www.kuaishou.com/'))
                           .then((value) async {
                         var resp = await value.close();
-                        var responseBody =
-                            await resp.transform(Utf8Decoder()).join();
+                        resp.listen((event) {}, onDone: () {
+                          debugPrint('request complete');
+                        });
                       });
                     },
                     child: Text('Click >>> make Http request'),

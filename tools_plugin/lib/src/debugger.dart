@@ -33,7 +33,7 @@ import 'widgets/transparent_route.dart';
 
 const double _paddingTop = 80;
 
-typedef Future PushNamedCallback(NavigatorState navigatorState, String url);
+typedef Future PushNamedCallback(NavigatorState navigatorState, String? url);
 
 class Debugger {
   Debugger._privateConstructor();
@@ -42,18 +42,18 @@ class Debugger {
 
 
 
-  OverlayEntry _debuggerOverlay;
+  OverlayEntry? _debuggerOverlay;
 
-  String _title;
+  String? _title;
 
-  String get title => _title;
-  BuildContext _appContext;
+  String? get title => _title;
+  BuildContext? _appContext;
 
   final Completer<BuildContext> appContext = Completer<BuildContext>();
 
-  GlobalKey _rootRepaintBoundaryKey;
+  GlobalKey? _rootRepaintBoundaryKey;
 
-  GlobalKey get rootRepaintBoundaryKey => _rootRepaintBoundaryKey;
+  GlobalKey? get rootRepaintBoundaryKey => _rootRepaintBoundaryKey;
 
 
 
@@ -63,31 +63,31 @@ class Debugger {
   Map<String, String> get customRootDirs => _customRootDirs;
 
   ///自定义路由打开方式
-  PushNamedCallback _customPushNamed;
+  PushNamedCallback? _customPushNamed;
 
   ///初始化
   Future<void> init(
       {String toolTitle = 'KDebugTools',
       bool autoStartWebServer = false,
       bool autoStartHttpHook = false,
-      List<String> allServEnvKeys,
-      List<ServerEnvConfig> allServConfigs}) async {
+      List<String>? allServEnvKeys,
+      List<ServerEnvConfig>? allServConfigs}) async {
     _title = toolTitle;
     await ServerEnv.instance.init(allServEnvKeys, allServConfigs);
     await NetworkDebugger.instance.init();
-    if (autoStartWebServer ?? false) {
+    if (autoStartWebServer) {
       await WebServer.instance.start();
     }
-    if (autoStartHttpHook ?? false) {
+    if (autoStartHttpHook) {
       HttpHookController.instance.setEnable(true);
     }
     DebuggerRegister.instance.registerDefault();
     return Future.value();
   }
 
-  Future<OverlayState> findRootOverlay() async {
-    OverlayState findOverlay(BuildContext ctx) {
-      OverlayState ret = Overlay.of(ctx, rootOverlay: true);
+  Future<OverlayState?> findRootOverlay() async {
+    OverlayState? findOverlay(BuildContext ctx) {
+      OverlayState? ret = Overlay.of(ctx, rootOverlay: true);
       if (ret == null) {
         ctx.visitChildElements((element) {
           if (ret == null) {
@@ -124,14 +124,14 @@ class Debugger {
         return FloatingButtonWidget();
       },
     );
-    OverlayState rootOverlay = await findRootOverlay();
-    rootOverlay?.insert(_debuggerOverlay);
+    OverlayState? rootOverlay = await findRootOverlay();
+    rootOverlay?.insert(_debuggerOverlay!);
   }
 
   ///隐藏浮窗
   void hideDebugger() {
     if (_debuggerOverlay != null) {
-      _debuggerOverlay.remove();
+      _debuggerOverlay!.remove();
       _debuggerOverlay = null;
     }
   }
@@ -142,7 +142,7 @@ class Debugger {
   }
 
   ///显示主页面
-  void showDebuggerDialog(BuildContext ctx, {String initialRoute}) {
+  void showDebuggerDialog(BuildContext ctx, {String? initialRoute}) {
     //只弹出一个主页面
     if (debuggerRouteObserver.navigator == null) {
       Navigator.push(ctx, TransparentCupertinoPageRoute(builder: (ctx) {
@@ -205,11 +205,11 @@ class Debugger {
     LogWatcherController.instance.customDebugPrint(message);
   }
 
-  Future pushNamed(NavigatorState navigatorState, String url) {
+  Future pushNamed(NavigatorState navigatorState, String? url) {
     if (_customPushNamed != null) {
-      return _customPushNamed(navigatorState, url);
+      return _customPushNamed!(navigatorState, url);
     }
-    return navigatorState.pushNamed(url);
+    return navigatorState.pushNamed(url!);
   }
 
   ///自定义跳转方法

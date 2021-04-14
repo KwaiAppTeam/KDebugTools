@@ -22,7 +22,7 @@ import 'package:shelf_router/shelf_router.dart' as shelf;
 import '../handler_def.dart';
 
 class SharedPreferencesHandler extends AbsAppHandler {
-  SharedPreferences _sharedPreferences;
+  SharedPreferences? _sharedPreferences;
 
   @override
   shelf.Router get router {
@@ -47,12 +47,12 @@ class SharedPreferencesHandler extends AbsAppHandler {
   ///读取数据
   Future<Response> _list(Request request) async {
     await _ensureInitialized();
-    await _sharedPreferences.reload();
+    await _sharedPreferences!.reload();
     Map<String, Object> data = Map<String, Object>();
-    List<Object> kvs = List<Object>();
+    List<Object> kvs = <Object>[];
     data['list'] = kvs;
-    _sharedPreferences.getKeys().forEach((key) {
-      kvs.add(buildDataModel(key: key, value: _sharedPreferences.get(key)));
+    _sharedPreferences!.getKeys().forEach((key) {
+      kvs.add(buildDataModel(key: key, value: _sharedPreferences!.get(key)));
     });
     return ok(data);
   }
@@ -60,34 +60,34 @@ class SharedPreferencesHandler extends AbsAppHandler {
   ///删除
   Future<Response> _delete(Request request) async {
     await _ensureInitialized();
-    await _sharedPreferences.reload();
+    await _sharedPreferences!.reload();
     Map body = jsonDecode(await request.readAsString());
     String key = body['key'];
-    _sharedPreferences.remove(key);
+    _sharedPreferences!.remove(key);
     return ok();
   }
 
   ///新增 或 修改
   Future<Response> _commit(Request request) async {
     await _ensureInitialized();
-    await _sharedPreferences.reload();
+    await _sharedPreferences!.reload();
     Map body = jsonDecode(await request.readAsString());
-    String key = body['key'];
-    String value = body['value'];
-    String valueType = body['valueType'];
+    String? key = body['key'];
+    String? value = body['value'];
+    String? valueType = body['valueType'];
     try {
       switch (valueType) {
         case 'String':
-          _sharedPreferences.setString(key, value);
+          _sharedPreferences!.setString(key!, value!);
           break;
         case 'bool':
-          _sharedPreferences.setBool(key, value?.toLowerCase() == 'true');
+          _sharedPreferences!.setBool(key!, value?.toLowerCase() == 'true');
           break;
         case 'int':
-          _sharedPreferences.setInt(key, int.parse(value));
+          _sharedPreferences!.setInt(key!, int.parse(value!));
           break;
         case 'double':
-          _sharedPreferences.setDouble(key, double.parse(value));
+          _sharedPreferences!.setDouble(key!, double.parse(value!));
           break;
         default:
           return error('unknown valueType');
@@ -99,8 +99,8 @@ class SharedPreferencesHandler extends AbsAppHandler {
     return ok();
   }
 
-  Object buildDataModel({String key, Object value}) {
-    Map<String, Object> model = Map<String, Object>();
+  Object buildDataModel({String? key, Object? value}) {
+    Map<String, Object?> model = Map<String, Object?>();
     model['key'] = key;
     model['value'] = value;
     model['valueType'] = value?.runtimeType?.toString();

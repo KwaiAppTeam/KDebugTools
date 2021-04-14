@@ -25,14 +25,14 @@ class WsStat {
 
 ///websocket的消息
 class WsMessage {
-  String module;
-  int cmd;
-  ContentType type;
-  Uint8List data;
+  String? module;
+  int? cmd;
+  ContentType? type;
+  Uint8List? data;
 
   WsMessage({this.module, this.cmd, this.type, this.data});
 
-  static WsMessage fromJson(Map<String, dynamic> result) {
+  static WsMessage? fromJson(Map<String, dynamic>? result) {
     if (result == null) {
       return null;
     }
@@ -45,7 +45,7 @@ class WsMessage {
       if (message.type == ContentType.binary) {
         message.data = base64Decode(result['data']);
       } else {
-        message.data = utf8.encode(result['data']);
+        message.data = utf8.encode(result['data']) as Uint8List?;
       }
     }
     return message;
@@ -59,9 +59,9 @@ class WsMessage {
     result['type'] = type.toString();
     if (data != null) {
       if (type == ContentType.binary) {
-        result['data'] = base64Encode(data);
+        result['data'] = base64Encode(data!);
       } else {
-        result['data'] = utf8.decode(data);
+        result['data'] = utf8.decode(data!);
       }
     }
     return result;

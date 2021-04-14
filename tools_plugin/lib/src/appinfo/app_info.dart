@@ -24,7 +24,7 @@ class AppInfoPage extends StatefulWidget {
 }
 
 class _AppInfoPageState extends State<AppInfoPage> {
-  List<Widget> _widgets = List<Widget>();
+  List<Widget> _widgets = <Widget>[];
 
   @override
   void initState() {

@@ -30,9 +30,9 @@ typedef OnSocketData = void Function(WsMessage);
 ///websocket
 class WebSocketHandler extends AbsAppHandler {
   static int _seq = 0;
-  static Map<String, List<OnSocketData>> _dataSubs =
-      Map<String, List<OnSocketData>>();
-  static List<WebSocketChannel> _connects = List<WebSocketChannel>();
+  static Map<String, List<OnSocketData?>> _dataSubs =
+      Map<String, List<OnSocketData?>>();
+  static List<WebSocketChannel> _connects = <WebSocketChannel>[];
 
   static disconnectAll() {
     _connects.forEach((element) {
@@ -41,7 +41,7 @@ class WebSocketHandler extends AbsAppHandler {
   }
 
   //发送心跳
-  Timer _hbTimer;
+  Timer? _hbTimer;
 
   @override
   shelf.Router get router {
@@ -57,7 +57,7 @@ class WebSocketHandler extends AbsAppHandler {
 //      webSocket.sink.add("echo $message");
       try {
         WsMessage msg =
-            WsMessage.fromJson(jsonDecode(message) as Map<String, dynamic>);
+            WsMessage.fromJson(jsonDecode(message) as Map<String, dynamic>?)!;
         _dispatchMessage(msg);
       } catch (e) {
         debugPrint('parse message error $e');
@@ -91,10 +91,10 @@ class WebSocketHandler extends AbsAppHandler {
   }
 
   void _startHeartIfNeed() {
-    if (_hbTimer == null || !_hbTimer.isActive) {
+    if (_hbTimer == null || !_hbTimer!.isActive) {
       _hbTimer = Timer.periodic(Duration(seconds: 3), (timer) {
         if (_connects.isEmpty) {
-          _hbTimer.cancel();
+          _hbTimer!.cancel();
           return;
         }
         broadcastJson(
@@ -108,9 +108,9 @@ class WebSocketHandler extends AbsAppHandler {
   }
 
   void _dispatchMessage(WsMessage msg) {
-    _dataSubs[msg.module]?.forEach((onData) {
+    _dataSubs[msg.module!]?.forEach((onData) {
       try {
-        onData(msg);
+        onData!(msg);
       } catch (e) {
         debugPrint('dispatchMessage error $e');
       }
@@ -118,18 +118,18 @@ class WebSocketHandler extends AbsAppHandler {
   }
 
   ///注册监听
-  static void registerSub(String module, OnSocketData sub) {
+  static void registerSub(String module, OnSocketData? sub) {
     debugPrint('registerSub $module');
     if (_dataSubs[module] == null) {
-      _dataSubs[module] = List<OnSocketData>();
+      _dataSubs[module] = <OnSocketData?>[];
     }
-    if (!_dataSubs[module].contains(sub)) {
-      _dataSubs[module].add(sub);
+    if (!_dataSubs[module]!.contains(sub)) {
+      _dataSubs[module]!.add(sub);
     }
   }
 
   ///反注册监听
-  static void unregisterSub(String module, OnSocketData sub) {
+  static void unregisterSub(String module, OnSocketData? sub) {
     _dataSubs[module]?.remove(sub);
   }
 

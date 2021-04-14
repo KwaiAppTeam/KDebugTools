@@ -23,16 +23,16 @@ import '../widgets/list_widgets.dart';
 import 'http_client_wrapper.dart';
 
 class NetworkProxyConfig {
-  bool enable = false;
-  String proxyIp;
-  String proxyPort;
+  bool? enable = false;
+  String? proxyIp;
+  String? proxyPort;
 
   NetworkProxyConfig({this.enable, this.proxyIp, this.proxyPort});
 
   NetworkProxyConfig copyWith({
-    bool enable,
-    String proxyIp,
-    String proxyPort,
+    bool? enable,
+    String? proxyIp,
+    String? proxyPort,
   }) {
     return NetworkProxyConfig(
       enable: enable ?? this.enable,
@@ -51,13 +51,13 @@ class NetworkDebugger {
   static const String KEY_PROXY_IP = "KEY_PROXY_IP";
   static const String KEY_PROXY_PORT = "KEY_PROXY_PORT";
 
-  SharedPreferences _spf;
+  late SharedPreferences _spf;
 
   final ValueNotifier<bool> enableProxy = ValueNotifier(false);
 
-  String get proxyIp => _spf.getString(KEY_PROXY_IP);
+  String get proxyIp => _spf.getString(KEY_PROXY_IP) ?? '';
 
-  String get proxyPort => _spf.getString(KEY_PROXY_PORT);
+  String get proxyPort => _spf.getString(KEY_PROXY_PORT) ?? '';
 
   void setEnableProxy(bool v) {
     enableProxy.value = v;
@@ -85,7 +85,7 @@ class NetworkDebugger {
 
 class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext context) {
+  HttpClient createHttpClient(SecurityContext? context) {
     HttpClient hc = HttpClientWrapper(super.createHttpClient(context))
       ..findProxy = _findProxy
       ..badCertificateCallback =
@@ -124,7 +124,7 @@ class _NetworkProxyConfigPageState extends State<NetworkProxyConfigPage> {
   }
 
   List<Widget> _buildInfo() {
-    List<Widget> result = List<Widget>();
+    List<Widget> result = <Widget>[];
     result.add(SimpleListToggleWidget(
       label: 'Enable',
       value: NetworkDebugger.instance.enableProxy,

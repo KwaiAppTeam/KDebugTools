@@ -30,15 +30,15 @@ class ConfigProvider {
   static const String dbFieldData = 'data';
 
   String dbName = _DEFAULT_DB;
-  String dbTableName = _DEFAULT_TABLE;
+  String? dbTableName = _DEFAULT_TABLE;
 
   ///多实例共享连接
-  static Database _db;
+  static Database? _db;
 
   ConfigProvider({this.dbTableName});
 
   Future _ensureOpened() async {
-    if (_db == null || !_db.isOpen) {
+    if (_db == null || !_db!.isOpen) {
       var databasesPath = await getDatabasesPath();
       String dbPath = join(databasesPath, dbName);
       debugPrint('open db: $dbPath');
@@ -59,7 +59,7 @@ class ConfigProvider {
   ///添加
   Future<int> add(String data) async {
     await _ensureOpened();
-    int id = await _db.rawInsert('''
+    int id = await _db!.rawInsert('''
         INSERT  INTO $dbTableName($dbFieldData)
     VALUES('$data');
         ''');
@@ -67,10 +67,10 @@ class ConfigProvider {
   }
 
   ///更新
-  Future<int> update(int id, String data) async {
+  Future<int> update(int? id, String data) async {
     await _ensureOpened();
     //根据id更新
-    int updateCount = await _db.rawUpdate(
+    int updateCount = await _db!.rawUpdate(
         'UPDATE $dbTableName SET $dbFieldData = ? WHERE $dbFieldId = ?',
         [data, id]);
     debugPrint('$updateCount rows updated');
@@ -79,32 +79,32 @@ class ConfigProvider {
   }
 
   ///删除
-  Future<int> delete(int id) async {
+  Future<int> delete(int? id) async {
     await _ensureOpened();
-    return _db.delete(dbTableName, where: "$dbFieldId = ?", whereArgs: [id]);
+    return _db!.delete(dbTableName!, where: "$dbFieldId = ?", whereArgs: [id]);
   }
 
   ///所有记录
   Future<List<ConfigRecord>> getAllRecord() async {
     await _ensureOpened();
     List<Map> dataSet =
-        await _db.query(dbTableName, columns: null, whereArgs: []);
+        await _db!.query(dbTableName!, columns: null, whereArgs: []);
     if (dataSet.length > 0) {
       return dataSet.map((e) => ConfigRecord.fromMap(e)).toList();
     }
-    return List<ConfigRecord>();
+    return <ConfigRecord>[];
   }
 
-  Future<ConfigRecord> getRecord(int id) async {
+  Future<ConfigRecord?> getRecord(int id) async {
     await _ensureOpened();
-    List<Map> dataSet = await _db.query(dbTableName, where: 'id = $id');
+    List<Map> dataSet = await _db!.query(dbTableName!, where: 'id = $id');
     if (dataSet.length > 0) {
       return ConfigRecord.fromMap(dataSet.first);
     }
     return null;
   }
 
-  Future close() async {
+  Future? close() async {
     return _db?.close();
   }
 }

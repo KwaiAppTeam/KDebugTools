@@ -46,11 +46,11 @@ import 'handlers/sp_handler.dart';
 const _WEB_VERSION = 'v1.0.2';
 
 ///用于校验身份请求
-String _pinCode;
+String? _pinCode;
 
 ///用于校验get请求(图片视频预览 下载等会用到)
 ///每次开启服务均变化 通过websocket发送更新
-String _token;
+String? _token;
 
 class WebServer {
   WebServer._privateConstructor();
@@ -58,8 +58,8 @@ class WebServer {
   static final WebServer instance = WebServer._privateConstructor();
 
   static const int _DEFAULT_PORT = 9000;
-  HttpServer _server;
-  String _ip;
+  HttpServer? _server;
+  String? _ip;
 
   ValueNotifier<bool> started = ValueNotifier(false);
   int _usingPort = _DEFAULT_PORT;
@@ -100,7 +100,7 @@ class WebServer {
           .addMiddleware(optionsHandler())
           .addMiddleware(authRequests())
           .addHandler(_requestRouter);
-      shelf_io.serveRequests(_server, handler);
+      shelf_io.serveRequests(_server!, handler);
       started.value = true;
     } catch (e) {
       debugPrint('start server error. $e');
@@ -117,7 +117,7 @@ class WebServer {
     if (_server == null) {
       return Future.value();
     }
-    await _server.close(force: true);
+    await _server!.close(force: true);
     _server = null;
     started.value = false;
     WebSocketHandler.disconnectAll();
@@ -136,8 +136,9 @@ class WebServer {
   Future _initPinAndToken() async {
     //token
     _token = '';
-    while (_token.length < 4) {
-      _token += Random().nextInt(10).toString();
+    while (_token!.length < 4) {
+      var t = _token! + Random().nextInt(10).toString();
+      _token = t;
     }
     //pin
     var pref = await SharedPreferences.getInstance();
@@ -152,38 +153,18 @@ class WebServer {
     }
     _pinCode ??= '';
     //生成一个并存入sp
-    if (_pinCode.isEmpty) {
-      while (_pinCode.length < 4) {
-        _pinCode += Random().nextInt(10).toString();
+    if (_pinCode!.isEmpty) {
+      while (_pinCode!.length < 4) {
+        var t = _pinCode! + Random().nextInt(10).toString();
+        _pinCode = t;
       }
       pref.setInt('KDebugTools_PIN_TS', DateTime.now().millisecondsSinceEpoch);
-      pref.setString('KDebugTools_PIN', _pinCode);
+      pref.setString('KDebugTools_PIN', _pinCode!);
     }
   }
 
-  shelf.Handler get _requestRouter {
+  shelf_router.Router get _requestRouter {
     final router = shelf_router.Router();
-
-//    // Handlers can be added with `router.<verb>('<route>', handler)`, the
-//    // '<route>' may embed URL-parameters, and these may be taken as parameters
-//    // by the handler (but either all URL parameters or no URL parameters, must
-//    // be taken parameters by the handler).
-//    router.get('/say-hi/<name>', (Request request, String name) {
-//      return Response.ok('hi $name');
-//    });
-//
-//    // Embedded URL parameters may also be associated with a regular-expression
-//    // that the pattern must match.
-//    router.get('/user/<userId|[0-9]+>', (Request request, String userId) {
-//      return Response.ok('User has the user-number: $userId');
-//    });
-//
-//    // Handlers can be asynchronous (returning `FutureOr` is also allowed).
-//    router.get('/wave', (Request request) async {
-//      await Future.delayed(Duration(milliseconds: 100));
-//      return Response.ok('_o/');
-//    });
-
     //index
     router.get('/', (shelf.Request request) {
       return shelf.Response.seeOther('index.html');
@@ -215,7 +196,7 @@ class WebServer {
     router.all('/<ignored|.*>', (shelf.Request request) {
       return shelf.Response.notFound('Page not found');
     });
-    return router.handler;
+    return router;
   }
 }
 

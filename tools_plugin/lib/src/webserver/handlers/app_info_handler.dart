@@ -37,7 +37,7 @@ class AppInfoHandler extends AbsAppHandler {
     data['package'] = packageInfo.packageName;
     data['version'] = packageInfo.version;
     data['buildNumber'] = packageInfo.buildNumber;
-    List<BaseKeyValue> kvs = List<BaseKeyValue>();
+    List<BaseKeyValue> kvs = <BaseKeyValue>[];
     data['extra'] = kvs;
 
     kvs.add(BaseKeyValue(

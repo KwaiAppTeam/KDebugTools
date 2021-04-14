@@ -28,7 +28,7 @@ class DeviceInfoPage extends StatefulWidget {
 
 class _DeviceInfoPageState extends State<DeviceInfoPage> {
   bool _inited = false;
-  List<BaseKeyValue> _basekvs = List();
+  List<BaseKeyValue> _basekvs = [];
 
   @override
   void initState() {
@@ -73,21 +73,21 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
       ));
       _basekvs.add(BaseKeyValue(
         'release',
-        'Android ${_androidInfo.version?.release}',
+        'Android ${_androidInfo.version.release}',
       ));
       _basekvs.add(BaseKeyValue(
         'Android sdkInt',
-        '${_androidInfo.version?.sdkInt}',
+        '${_androidInfo.version.sdkInt}',
       ));
       //屏幕信息
       _addWindowInfo();
       _basekvs.add(BaseKeyValue(
         'codename',
-        '${_androidInfo.version?.codename}',
+        '${_androidInfo.version.codename}',
       ));
       _basekvs.add(BaseKeyValue(
         'incremental',
-        '${_androidInfo.version?.incremental}',
+        '${_androidInfo.version.incremental}',
       ));
 
       _basekvs.add(BaseKeyValue(

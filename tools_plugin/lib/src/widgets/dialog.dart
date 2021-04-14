@@ -20,13 +20,13 @@ import 'package:flutter/material.dart';
 import '../../k_debug_tools.dart';
 
 ///显示菜单对话框 类似右键菜单, Future返回选中的第x项, null没选中
-Future<int> showContextMenuDialog(
+Future<int?> showContextMenuDialog(
   BuildContext ctx,
   List<String> options, {
-  String title,
+  String? title,
 }) {
   List<Widget> _optionWidget(BuildContext context) {
-    List<Widget> result = List<Widget>();
+    List<Widget> result = <Widget>[];
     for (int i = 0; i < options.length; i++) {
       String str = options[i];
       result.add(GestureDetector(
@@ -68,10 +68,10 @@ Future<int> showContextMenuDialog(
 }
 
 ///显示输入框对话框
-Future<String> showInputDialog(BuildContext ctx,
+Future<String?> showInputDialog(BuildContext ctx,
     {String title = '',
     String initValue = '',
-    TextInputType inputType = TextInputType.text}) {
+    TextInputType? inputType = TextInputType.text}) {
   TextEditingController _editingController =
       TextEditingController.fromValue(TextEditingValue(text: initValue));
   return showDialog<String>(

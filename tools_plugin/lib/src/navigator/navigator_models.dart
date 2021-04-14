@@ -18,8 +18,8 @@ class NavigatorInfo {
     this.routes,
   });
 
-  String name;
-  List<RouteInfo> routes;
+  String? name;
+  List<RouteInfo?>? routes;
 
   factory NavigatorInfo.fromJson(Map<String, dynamic> json) => NavigatorInfo(
         name: json["name"],
@@ -29,7 +29,7 @@ class NavigatorInfo {
 
   Map<String, dynamic> toJson() => {
         "name": name,
-        "routes": List<dynamic>.from(routes.map((x) => x.toJson())),
+        "routes": List<dynamic>.from(routes!.map((x) => x!.toJson())),
       };
 }
 
@@ -45,14 +45,14 @@ class RouteInfo {
     this.childNavigators,
   });
 
-  String name;
-  String settings;
-  double top;
-  double left;
-  double width;
-  double height;
-  bool isCurrent;
-  List<NavigatorInfo> childNavigators;
+  String? name;
+  String? settings;
+  double? top;
+  double? left;
+  double? width;
+  double? height;
+  bool? isCurrent;
+  List<NavigatorInfo?>? childNavigators;
 
   factory RouteInfo.fromJson(Map<String, dynamic> json) => RouteInfo(
         name: json["name"],
@@ -75,6 +75,6 @@ class RouteInfo {
         "height": height,
         "isCurrent": isCurrent,
         "childNavigators":
-            List<dynamic>.from(childNavigators.map((x) => x.toJson())),
+            List<dynamic>.from(childNavigators!.map((x) => x!.toJson())),
       };
 }

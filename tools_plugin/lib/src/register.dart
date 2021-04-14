@@ -42,8 +42,8 @@ class DebuggerRegister {
 
   List<ToolsGroup> get groups => List.from(_groups);
 
-  ToolPageRoute getPageRoute(String route) {
-    ToolPageRoute ret;
+  ToolPageRoute? getPageRoute(String? route) {
+    ToolPageRoute? ret;
     _toolRoutes.forEach((key, value) {
       if (key == route) {
         ret = value;
@@ -73,7 +73,7 @@ class DebuggerRegister {
   }
 
   void _registerItemToGroup(ToolsGroup group, ItemBuilder item) {
-    group.toolWidgetBuilder.add(item);
+    group.toolWidgetBuilder!.add(item);
   }
 
   void registerDefault() {
@@ -139,7 +139,7 @@ class DebuggerRegister {
         onChanged: (v) {
           showPerformanceOverlay.value = v;
           WidgetsApp.showPerformanceOverlayOverride = v;
-          StatefulElement rootAppElement;
+          StatefulElement? rootAppElement;
           ctx.visitAncestorElements((element) {
             if (element is StatefulElement && element.widget is WidgetsApp) {
               rootAppElement = element;

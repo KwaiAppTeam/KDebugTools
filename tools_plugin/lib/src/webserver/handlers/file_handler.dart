@@ -80,9 +80,9 @@ class FileHandler extends AbsAppHandler {
   Future<Response> _type(Request request) async {
     if (request.url.hasQuery &&
         request.url.queryParameters['path']?.isNotEmpty == true) {
-      String path = Uri.decodeFull(request.url.queryParameters['path']);
+      String path = Uri.decodeFull(request.url.queryParameters['path']!);
       if (FileSystemEntity.isFileSync(path)) {
-        String mime = await lookupMime(File(path));
+        String? mime = await lookupMime(File(path));
         var stat = await File(path).stat();
         var data = {
           'size': stat.size,
@@ -105,7 +105,7 @@ class FileHandler extends AbsAppHandler {
   Future<Response> _save(Request request) async {
     if (request.url.hasQuery &&
         request.url.queryParameters['path']?.isNotEmpty == true) {
-      String path = Uri.decodeFull(request.url.queryParameters['path']);
+      String path = Uri.decodeFull(request.url.queryParameters['path']!);
       File file = File(path);
       Completer<Response> completer = Completer();
       try {
@@ -131,7 +131,7 @@ class FileHandler extends AbsAppHandler {
   Future<Response> _download(Request request) async {
     if (request.url.hasQuery &&
         request.url.queryParameters['path']?.isNotEmpty == true) {
-      String path = Uri.decodeFull(request.url.queryParameters['path']);
+      String path = Uri.decodeFull(request.url.queryParameters['path']!);
       String name = path.substring(1 + path.lastIndexOf('/'));
       bool isDir = FileSystemEntity.isDirectorySync(path);
       File file;
@@ -172,12 +172,12 @@ class FileHandler extends AbsAppHandler {
   ///列出文件夹的内容
   Future<Response> _list(Request request) async {
     Map<String, Object> data = Map<String, Object>();
-    List<FileModel> files = List<FileModel>();
+    List<FileModel> files = <FileModel>[];
     data['files'] = files;
     if (request.url.hasQuery &&
         request.url.queryParameters['path']?.isNotEmpty == true) {
       //list file in dir
-      String path = Uri.decodeFull(request.url.queryParameters['path']);
+      String path = Uri.decodeFull(request.url.queryParameters['path']!);
       Directory dir = Directory(path);
       if (!dir.existsSync()) {
         return notFound();
@@ -217,15 +217,15 @@ class FileHandler extends AbsAppHandler {
   Future<Response> _delete(Request request) async {
     Map body = jsonDecode(await request.readAsString());
     //path or pathList
-    String path = body['path'];
+    String? path = body['path'];
     List<String> pathList;
     if (path != null) {
       pathList = [path];
     } else {
-      pathList = (body['pathList'] as List)?.cast<String>() ?? <String>[];
+      pathList = (body['pathList'] as List?)?.cast<String>() ?? <String>[];
     }
-    List<String> successTask = List<String>();
-    List<String> failedTask = List<String>();
+    List<String> successTask = <String>[];
+    List<String> failedTask = <String>[];
     Map<String, Object> data = Map<String, Object>();
     data['successTask'] = successTask;
     data['failedTask'] = failedTask;
@@ -253,7 +253,7 @@ class FileHandler extends AbsAppHandler {
   Future<Response> _upload(Request request) async {
     if (request.url.hasQuery &&
         request.url.queryParameters['path']?.isNotEmpty == true) {
-      String destPath = Uri.decodeFull(request.url.queryParameters['path']);
+      String destPath = Uri.decodeFull(request.url.queryParameters['path']!);
       String replaceTag =
           Uri.decodeFull(request.url.queryParameters['replace'] ?? '');
       Directory dest = Directory(destPath);
@@ -263,22 +263,22 @@ class FileHandler extends AbsAppHandler {
       }
       Completer<Response> completer = Completer();
       try {
-        ContentType ct = ContentType.parse(request.headers['content-type']);
-        String boundary = ct.parameters['boundary'];
+        ContentType ct = ContentType.parse(request.headers['content-type']!);
+        String boundary = ct.parameters['boundary']!;
         request
             .read()
             .transform(MimeMultipartTransformer(boundary))
             .map(HttpMultipartFormData.parse)
             .map((HttpMultipartFormData formData) {
-          String name = formData.contentDisposition.parameters['name'];
+          String? name = formData.contentDisposition.parameters['name'];
           if (name == 'file') {
             String filename =
-                formData.contentDisposition.parameters['filename'];
+                formData.contentDisposition.parameters['filename']!;
             String destFile = dest.path + '/' + filename;
             //找到一个不存在的文件名 或删除旧文件
             while (FileSystemEntity.typeSync(destFile) !=
                 FileSystemEntityType.notFound) {
-              if ('true' == replaceTag?.toLowerCase() &&
+              if ('true' == replaceTag.toLowerCase() &&
                   FileSystemEntity.isFileSync(destFile)) {
                 //delete old file
                 debugPrint('remove old file $destFile');
@@ -323,13 +323,13 @@ class FileHandler extends AbsAppHandler {
   Future<Response> _rename(Request request) async {
     Map body = jsonDecode(await request.readAsString());
     String path = body['path'];
-    String newpath = body['newPath'];
+    String? newpath = body['newPath'];
     //旧文件不存在
     if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound) {
       return error('rename failed, file not exist: $path');
     }
     //新文件存在
-    if (FileSystemEntity.typeSync(newpath) != FileSystemEntityType.notFound) {
+    if (FileSystemEntity.typeSync(newpath!) != FileSystemEntityType.notFound) {
       return error('rename failed, file exist: $newpath');
     }
     try {

@@ -38,7 +38,7 @@ class LogWatcherHandler extends AbsAppHandler {
   ///切换开关
   Future<Response> _toggle(Request request) async {
     Map body = jsonDecode(await request.readAsString());
-    bool enable = body['enable'];
+    bool? enable = body['enable'];
     debugPrint('set LogWatcher to $enable');
     LogWatcherController.instance.enable = enable;
     return ok(null);
@@ -46,7 +46,7 @@ class LogWatcherHandler extends AbsAppHandler {
 
   ///读取状态
   Future<Response> _state(Request request) async {
-    Map<String, Object> data = Map<String, Object>();
+    Map<String, Object?> data = Map<String, Object?>();
     data['enable'] = LogWatcherController.instance.enable;
     return ok(data);
   }

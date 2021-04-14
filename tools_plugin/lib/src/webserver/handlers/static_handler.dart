@@ -29,10 +29,10 @@ final _defaultMimeTypeResolver = new MimeTypeResolver();
 
 Handler createStaticFileHandler(String filePath,
     {bool useHeaderBytesForContentType: false,
-    MimeTypeResolver contentTypeResolver}) {
+    MimeTypeResolver? contentTypeResolver}) {
   return (Request request) {
     var entityType = FileSystemEntity.typeSync(filePath, followLinks: true);
-    File file;
+    File? file;
     if (entityType == FileSystemEntityType.file) {
       file = new File(filePath);
     } else if (entityType == FileSystemEntityType.directory) {
@@ -51,13 +51,13 @@ Handler createStaticFileHandler(String filePath,
   };
 }
 
-FutureOr<String> lookupMime(File file,
+FutureOr<String?> lookupMime(File? file,
     {bool useHeaderBytesForContentType: false,
-    MimeTypeResolver contentTypeResolver}) async {
+    MimeTypeResolver? contentTypeResolver}) async {
   contentTypeResolver ??= _defaultMimeTypeResolver;
   if (useHeaderBytesForContentType) {
     var length =
-        math.min(contentTypeResolver.magicNumbersMaxLength, file.lengthSync());
+        math.min(contentTypeResolver.magicNumbersMaxLength, file!.lengthSync());
 
     var byteSink = new ByteAccumulatorSink();
 
@@ -65,7 +65,7 @@ FutureOr<String> lookupMime(File file,
     byteSink.close(); //
     return contentTypeResolver.lookup(file.path, headerBytes: byteSink.bytes);
   } else {
-    return contentTypeResolver.lookup(file.path);
+    return contentTypeResolver.lookup(file!.path);
   }
 }
 
@@ -83,14 +83,14 @@ Future<String> _hash(File file, FileStat stat) async {
 }
 
 Future<Response> _handleFile(
-    Request request, File file, FutureOr<String> getContentType()) async {
+    Request request, File file, FutureOr<String?> getContentType()) async {
   var stat = file.statSync();
   var ifModifiedSince = request.ifModifiedSince;
   var hashNow = await _hash(file, stat);
 
   //check modified
   if (request.headers[HttpHeaders.ifNoneMatchHeader] != null) {
-    String hashOld = request.headers[HttpHeaders.ifNoneMatchHeader];
+    String? hashOld = request.headers[HttpHeaders.ifNoneMatchHeader];
     if (hashNow == hashOld) {
       //304
       return new Response.notModified();
@@ -125,7 +125,7 @@ Future<Response> _handleFile(
   if (request.headers[HttpHeaders.rangeHeader] != null) {
     //request:  bytes=start-end
     debugPrint('range: ${request.headers[HttpHeaders.rangeHeader]}');
-    var r = request.headers[HttpHeaders.rangeHeader].split('=')[1].split('-');
+    var r = request.headers[HttpHeaders.rangeHeader]!.split('=')[1].split('-');
     int s = r[0].isEmpty ? 0 : int.parse(r[0]);
     int e = r[1].isEmpty ? stat.size - 1 : int.parse(r[1]);
     //response: bytes 0-10/3103

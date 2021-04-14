@@ -22,12 +22,12 @@ class FlutterCapture {
     this.rootWidget,
   });
 
-  double screenWidth;
-  double screenHeight;
-  double paddingTop;
-  double paddingBottom;
-  String screenshot;
-  WidgetNode rootWidget;
+  double? screenWidth;
+  double? screenHeight;
+  double? paddingTop;
+  double? paddingBottom;
+  String? screenshot;
+  WidgetNode? rootWidget;
 
   factory FlutterCapture.fromJson(Map<String, dynamic> json) => FlutterCapture(
         screenWidth: json["screenWidth"],
@@ -44,7 +44,7 @@ class FlutterCapture {
         "paddingTop": paddingTop,
         "paddingBottom": paddingBottom,
         "screenshot": screenshot,
-        "rootWidget": rootWidget.toJson(),
+        "rootWidget": rootWidget!.toJson(),
       };
 }
 
@@ -60,14 +60,14 @@ class WidgetNode {
     this.children,
   });
 
-  String name;
-  String data;
-  double width;
-  double height;
-  double left;
-  double top;
-  Map<String, dynamic> attrs;
-  List<WidgetNode> children;
+  String? name;
+  String? data;
+  double? width;
+  double? height;
+  double? left;
+  double? top;
+  Map<String, dynamic>? attrs;
+  List<WidgetNode>? children;
 
   factory WidgetNode.fromJson(Map<String, dynamic> json) => WidgetNode(
         name: json["name"],
@@ -93,6 +93,6 @@ class WidgetNode {
         "attrs": attrs,
         "children": children == null
             ? null
-            : children.map((e) => e.toJson()).toList(growable: false)
+            : children!.map((e) => e.toJson()).toList(growable: false)
       };
 }

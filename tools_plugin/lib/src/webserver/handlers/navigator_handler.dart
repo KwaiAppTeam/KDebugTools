@@ -43,20 +43,20 @@ class NavigatorHandler extends AbsAppHandler {
 
   ///抓取页面路由状态
   Future<Response> _state(Request request) async {
-    NavigatorInfo info = await _fetchRootNavigatorInfo();
+    NavigatorInfo? info = await _fetchRootNavigatorInfo();
     return ok(info);
   }
 
   ///弹出页面
   Future<Response> _pop(Request request) async {
     Map body = jsonDecode(await request.readAsString());
-    String name = body['name'];
+    String? name = body['name'];
     debugPrint('pop route $name ...');
-    ModalRoute route = await _findRoute(name);
+    ModalRoute? route = await _findRoute(name);
     if (route != null) {
       bool popped = false;
-      route.navigator.popUntil((r) {
-        String n = getRouteName(r);
+      route.navigator!.popUntil((r) {
+        String n = getRouteName(r as ModalRoute<dynamic>);
         popped |= (n == name);
         bool canPop = popped && n != name;
         if (canPop) {
@@ -81,11 +81,11 @@ class NavigatorHandler extends AbsAppHandler {
   ///push页面
   Future<Response> _push(Request request) async {
     Map body = jsonDecode(await request.readAsString());
-    String url = body['url'];
-    String navigator = body['navigator'];
+    String? url = body['url'];
+    String? navigator = body['navigator'];
     debugPrint('push $navigator $url');
 
-    NavigatorState navigatorState = await _findNavigator(navigator);
+    NavigatorState? navigatorState = await _findNavigator(navigator);
     if (navigatorState == null) {
       debugPrint('navigator not found, use root navigator instead');
       BuildContext ctx = await Debugger.instance.appContext.future;
@@ -110,7 +110,7 @@ class NavigatorHandler extends AbsAppHandler {
   ///返回rootElement
   FutureOr<Element> _rootElement() async {
     int count = 0;
-    Element rootElement;
+    Element? rootElement;
     BuildContext ctx = await Debugger.instance.appContext.future;
     ctx.visitChildElements((element) {
       count++;
@@ -121,18 +121,18 @@ class NavigatorHandler extends AbsAppHandler {
     if (count > 1) {
       return Future.error('error: find $count root nodes');
     }
-    return rootElement;
+    return rootElement!;
   }
 
-  Future<NavigatorState> _findNavigator(String name) async {
-    Element rootElement = await _rootElement();
-    NavigatorState target;
+  Future<NavigatorState?> _findNavigator(String? name) async {
+    Element rootElement = await (_rootElement());
+    NavigatorState? target;
 
     void visitModalRoute(Element visitE) {
       if (visitE.widget is RenderObjectWidget) {
-        ModalRoute route = ModalRoute.of(visitE);
+        ModalRoute? route = ModalRoute.of(visitE);
         if (route != null) {
-          String navigatorName = getNavigatorName(route.navigator.widget);
+          String navigatorName = getNavigatorName(route.navigator!.widget);
           if (navigatorName == name) {
             target = route.navigator;
           }
@@ -151,13 +151,13 @@ class NavigatorHandler extends AbsAppHandler {
     return target;
   }
 
-  Future<ModalRoute> _findRoute(String name) async {
-    Element rootElement = await _rootElement();
-    ModalRoute target;
+  Future<ModalRoute?> _findRoute(String? name) async {
+    Element rootElement = await (_rootElement());
+    ModalRoute? target;
 
     void visitModalRoute(Element visitE) {
       if (visitE.widget is RenderObjectWidget) {
-        ModalRoute route = ModalRoute.of(visitE);
+        ModalRoute? route = ModalRoute.of(visitE);
         if (route != null) {
           String routeName = getRouteName(route);
           if (routeName == name) {
@@ -178,21 +178,21 @@ class NavigatorHandler extends AbsAppHandler {
     return target;
   }
 
-  Future<NavigatorInfo> _fetchRootNavigatorInfo() async {
+  Future<NavigatorInfo?> _fetchRootNavigatorInfo() async {
     Element rootElement = await _rootElement();
-    Map<NavigatorState, List<ModalRoute>> addedRoutesMap =
-        Map<NavigatorState, List<ModalRoute>>();
-    NavigatorInfo _rootNavigator;
+    Map<NavigatorState?, List<ModalRoute>> addedRoutesMap =
+        Map<NavigatorState?, List<ModalRoute>>();
+    NavigatorInfo? _rootNavigator;
     int _dep = 0;
-    void visitModalRoute(int dep, NavigatorInfo parentNavigator,
-        RouteInfo routeInfo, Element visitE) {
+    void visitModalRoute(int dep, NavigatorInfo? parentNavigator,
+        RouteInfo? routeInfo, Element visitE) {
       if (visitE.widget is Navigator) {
         parentNavigator = NavigatorInfo()
-          ..name = getNavigatorName(visitE.widget)
-          ..routes = <RouteInfo>[];
+          ..name = getNavigatorName(visitE.widget as Navigator)
+          ..routes = <RouteInfo?>[];
         //Navigator作为之前的routeInfo的子节点
         if (routeInfo != null) {
-          routeInfo.childNavigators.add(parentNavigator);
+          routeInfo.childNavigators!.add(parentNavigator);
         }
         dep++;
       }
@@ -201,30 +201,30 @@ class NavigatorHandler extends AbsAppHandler {
         _rootNavigator = parentNavigator;
       }
       if (visitE.widget is RenderObjectWidget) {
-        ModalRoute route = ModalRoute.of(visitE);
+        ModalRoute? route = ModalRoute.of(visitE);
         if (route != null) {
           if (addedRoutesMap[route.navigator] == null) {
-            addedRoutesMap[route.navigator] = List<ModalRoute>();
+            addedRoutesMap[route.navigator] = <ModalRoute>[];
           }
-          if (!addedRoutesMap[route.navigator].contains(route)) {
-            addedRoutesMap[route.navigator].add(route);
+          if (!addedRoutesMap[route.navigator]!.contains(route)) {
+            addedRoutesMap[route.navigator]!.add(route);
             //新的routeInfo
             routeInfo = RouteInfo()
               ..name = getRouteName(route)
-              ..settings = route.settings?.toString()
-              ..childNavigators = <NavigatorInfo>[]
+              ..settings = route.settings.toString()
+              ..childNavigators = <NavigatorInfo?>[]
               ..isCurrent = route.isCurrent
               ..width = visitE.size?.width ?? 0
               ..height = visitE.size?.height ?? 0
               ..top = 0.0
               ..left = 0.0;
-            RenderObject renderObject = visitE.findRenderObject();
+            RenderObject? renderObject = visitE.findRenderObject();
             if (renderObject is RenderBox) {
               var offset = renderObject.localToGlobal(Offset.zero);
               routeInfo.top = offset.dy;
               routeInfo.left = offset.dx;
             }
-            parentNavigator.routes.add(routeInfo);
+            parentNavigator!.routes!.add(routeInfo);
           }
         }
       }
