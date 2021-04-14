@@ -13,24 +13,24 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  uuid: ^2.2.2
+  uuid: ^3.0.4
   cupertino_icons: ^1.0.2
-  http: ^0.12.2
-  oktoast: ^2.3.2
+  http: ^0.13.1
+  oktoast: ^3.0.0
   intl: ^0.17.0
-  rxdart: ^0.25.0
-  web_socket_channel: ^1.2.0
-  event_bus: ^1.1.1
-  cached_network_image: ^2.5.0
+  rxdart: ^0.26.0
+  web_socket_channel: ^2.0.0
+  event_bus: ^2.0.0
+  cached_network_image: ^3.0.0
   #video player
-  chewie: ^0.12.1+1
-  video_player: ^1.0.1
-  video_player_web: ^0.1.4+1
-  pin_code_fields: ^6.1.0
-  shared_preferences: ^0.5.12+4
-  shared_preferences_web: ^0.1.0
-  visibility_detector: ^0.1.5
-  provider: ^4.3.2+2
+  chewie: ^1.0.0
+  video_player: ^2.1.1
+  video_player_web: ^2.0.0
+  pin_code_fields: ^7.0.0
+  shared_preferences: ^2.0.5
+  shared_preferences_web: ^2.0.0
+  visibility_detector: ^0.2.0
+  provider: ^5.0.0
   firebase_analytics: ^7.0.1
 dev_dependencies:
   flutter_test:
