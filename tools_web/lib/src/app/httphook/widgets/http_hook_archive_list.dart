@@ -259,7 +259,7 @@ class _ArchiveListWidgetState extends State<ArchiveListWidget>
         }
       });
     });
-    String requestBody = HttpArchive.decodeBody(archive.requestBody);
+    String requestBody = archive.requestBodyString;
     if (requestBody != null && requestBody.isNotEmpty) {
       curl.write(" --data-binary '${requestBody.replaceAll("'", r"\'")}'");
     }

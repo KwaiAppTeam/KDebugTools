@@ -123,7 +123,7 @@ class HttpHookBloc extends AppBlocBase {
         _httpArchives[archive.uuid] = archive;
         setState();
       } catch (e) {
-        debugPrint(e);
+        debugPrint('$e');
       }
     };
     _webSocketBloc.registerSub('httphook', _onData);

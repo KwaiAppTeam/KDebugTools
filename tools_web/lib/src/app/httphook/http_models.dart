@@ -13,17 +13,17 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:uuid/uuid.dart';
 import 'package:k_debug_tools_web/src/app/httphookconfig/hook_config_models.dart';
-
+import 'package:uuid/uuid.dart';
 
 ///http包数据 app和web两端对应
 class HttpArchive {
   String uuid = Uuid().v4();
-  String status; //Connecting/Failed/Complete
+  String status; //Connecting/Waiting/Failed/Complete
   String method;
   String url;
 
@@ -48,10 +48,57 @@ class HttpArchive {
 
   ///hook配置
   HookConfig hookConfig;
+  ThrottleConfig throttleConfig;
+
+  ConnectInfo requestConnectInfo;
+  ConnectInfo responseConnectInfo;
+
+  String requestContentType;
+  String responseContentType;
 
   @override
   String toString() {
     return 'HttpArchive${toJson()}';
+  }
+
+  String get requestBodyString {
+    if (requestBody == null || requestContentType == null) return null;
+    try {
+      if (ContentType.parse(requestContentType)
+              .charset
+              ?.toLowerCase()
+              ?.endsWith('utf-8') ??
+          true) {
+        return utf8.decode(requestBody);
+      } else {
+        //todo process other charsets
+        return latin1.decode(requestBody);
+      }
+    } catch (e) {
+      debugPrint(
+          'decode body failed. ContentType: $requestContentType, error:$e');
+      return null;
+    }
+  }
+
+  String get responseBodyString {
+    if (responseBody == null || responseContentType == null) return null;
+    try {
+      if (ContentType.parse(responseContentType)
+              .charset
+              ?.toLowerCase()
+              ?.endsWith('utf-8') ??
+          true) {
+        return utf8.decode(responseBody);
+      } else {
+        //todo process other charsets
+        return latin1.decode(responseBody);
+      }
+    } catch (e) {
+      debugPrint(
+          'decode body failed. ContentType: $responseContentType, error:$e');
+      return null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -66,13 +113,17 @@ class HttpArchive {
     result['responseLength'] = responseLength;
 
     result['requestHeaders'] = requestHeaders;
-    result['requestBody'] = decodeBody(requestBody);
+    result['requestBodyBase64'] = _bodyBase64(requestBody);
+    result['requestContentType'] = requestContentType;
 
     result['responseHeaders'] = responseHeaders;
-    result['responseBody'] = decodeBody(responseBody);
+    result['responseBodyBase64'] = _bodyBase64(responseBody);
+    result['responseContentType'] = responseContentType;
 
     result['hookConfig'] = hookConfig;
-
+    result['throttleConfig'] = throttleConfig;
+    result['requestConnectInfo'] = requestConnectInfo;
+    result['responseConnectInfo'] = responseConnectInfo;
     return result;
   }
 
@@ -91,13 +142,30 @@ class HttpArchive {
     archive.statusCode = map['statusCode'];
     archive.responseLength = map['responseLength'];
     archive.requestHeaders = convertHeadersMap(map['requestHeaders']);
-    archive.requestBody = utf8.encode(map['requestBody'] ?? '');
+    archive.requestBody = map['requestBodyBase64'] != null
+        ? base64Decode(map['requestBodyBase64'])
+        : null;
+    archive.requestContentType = map['requestContentType'];
 
     archive.responseHeaders = convertHeadersMap(map['responseHeaders']);
-    archive.responseBody = utf8.encode(map['responseBody'] ?? '');
+    archive.responseBody = map['responseBodyBase64'] != null
+        ? base64Decode(map['responseBodyBase64'])
+        : null;
+    archive.responseContentType = map['responseContentType'];
 
     archive.hookConfig = map['hookConfig'] != null
         ? HookConfig.fromJson(map['hookConfig'])
+        : null;
+    archive.throttleConfig = map['throttleConfig'] != null
+        ? ThrottleConfig.fromJson(map['throttleConfig'])
+        : null;
+
+    archive.requestConnectInfo = map['requestConnectInfo'] != null
+        ? ConnectInfo.fromJson(map['requestConnectInfo'])
+        : null;
+
+    archive.responseConnectInfo = map['responseConnectInfo'] != null
+        ? ConnectInfo.fromJson(map['responseConnectInfo'])
         : null;
     return archive;
   }
@@ -110,13 +178,44 @@ class HttpArchive {
         .map((key, value) => MapEntry(key, (value as List).cast<String>()));
   }
 
-  static String decodeBody(Uint8List body) {
+  static String _bodyBase64(Uint8List body) {
     if (body == null) return null;
     try {
-      return utf8.decode(body);
+      return base64.encode(body);
     } catch (e) {
-      debugPrint('Encode body failed. $e');
+      debugPrint('encode body to base64 failed. $e');
       return null;
     }
+  }
+}
+
+class ConnectInfo {
+  int remotePort;
+  int localPort;
+  String remoteAddress;
+
+  @override
+  String toString() {
+    return 'ConnectInfo${toJson()}';
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> result = Map<String, dynamic>();
+    result['remotePort'] = remotePort;
+    result['localPort'] = localPort;
+    result['remoteAddress'] = remoteAddress;
+    return result;
+  }
+
+  static ConnectInfo fromJson(Map<String, dynamic> map) {
+    if (map == null) {
+      return null;
+    }
+    ConnectInfo info = ConnectInfo();
+    info.remotePort = map['remotePort'];
+    info.localPort = map['localPort'];
+    info.remoteAddress = map['remoteAddress'];
+
+    return info;
   }
 }

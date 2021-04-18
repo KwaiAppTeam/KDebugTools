@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,6 @@ import 'package:k_debug_tools_web/src/app/httphook/http_models.dart';
 import 'package:k_debug_tools_web/src/app/httphookconfig/hook_config_models.dart';
 import 'package:k_debug_tools_web/src/bloc_provider.dart';
 import 'package:k_debug_tools_web/src/theme.dart';
-
 
 ///请求详情
 class ArchiveDetailWidget extends StatefulWidget {
@@ -154,32 +153,38 @@ class _ArchiveDetailWidgetState extends State<ArchiveDetailWidget> {
 
   ///请求
   Widget _buildRequestWidget() {
-    return _buildReadOnlyTextField(_formatBody(archive.requestBody));
+    return _buildReadOnlyTextField(archive.requestBodyString);
   }
 
   ///响应
   Widget _buildResponseWidget() {
-    return _buildReadOnlyTextField(_formatBody(archive.responseBody));
+    ContentType contentType = ContentType.parse(archive.responseContentType);
+    if (contentType.primaryType == ContentType.text.primaryType ||
+        contentType.subType == ContentType.json.subType) {
+      //text
+      return _buildReadOnlyTextField(archive.responseBodyString);
+    } else if (contentType.primaryType?.toLowerCase() == 'image' &&
+        archive.responseBody != null) {
+      //image
+      return Image.memory(archive.responseBody);
+    } else {
+      return _buildReadOnlyTextField('preview not support');
+    }
   }
 
   Widget _buildReadOnlyTextField(String text) {
+    String str = text;
+    try {
+      //试试转json
+      str = JsonEncoder.withIndent('  ').convert(jsonDecode(text));
+    } catch (e) {
+      str = text;
+    }
     return Scrollbar(
       child: SelectableText(
-        text,
+        str ?? '',
       ),
     );
-  }
-
-  ///转body为格式化字符串
-  String _formatBody(Uint8List body) {
-    String str = '';
-    try {
-      //转字符串
-      str = HttpArchive.decodeBody(body) ?? '';
-      //试试转json
-      str = JsonEncoder.withIndent('  ').convert(jsonDecode(str));
-    } on FormatException catch (e) {}
-    return str;
   }
 
   String _formatHookConfig(HookConfig config) {

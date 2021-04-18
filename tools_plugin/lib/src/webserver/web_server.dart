@@ -44,7 +44,7 @@ import 'handlers/screen_recorder_handler.dart';
 import 'handlers/sp_handler.dart';
 
 ///对应发布到cdn的web版本
-const _WEB_VERSION = 'v1.0.3';
+const _WEB_VERSION = 'v2.0.0-nullsafety.2';
 
 ///用于校验身份请求
 String? _pinCode;
