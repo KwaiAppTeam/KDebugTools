@@ -159,6 +159,7 @@ class FileHandler extends AbsAppHandler {
       //write file
       Map<String, Object> headers = Map<String, Object>();
       headers[HttpHeaders.contentTypeHeader] = ContentType.binary.value;
+      headers[HttpHeaders.contentLengthHeader] = '${await file.length()}';
       //file name
       headers['Content-Disposition'] =
           'attachment; filename="${Uri.encodeFull(name)}"';
