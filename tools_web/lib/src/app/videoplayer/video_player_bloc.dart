@@ -24,13 +24,14 @@ class VideoPlayerBloc extends AppBlocBase {
   //路径和文件api一样
   static const String PATH = 'api/file';
 
-  //文本文件路径
+  //文本路径或者url
   final String filePath;
 
   bool _deleted = false;
 
-  String get networkPath =>
-      '${getHostWithSchema()}/$PATH/read$filePath?Token=${getToken()}';
+  String get networkPath => filePath.startsWith('http')
+      ? filePath
+      : '${getHostWithSchema()}/$PATH/read$filePath?Token=${getToken()}';
 
   bool get canDownload => !_deleted && filePath != null;
 
@@ -40,32 +41,4 @@ class VideoPlayerBloc extends AppBlocBase {
   void dispose() {}
 
   bool get hasFilePath => filePath?.isNotEmpty == true;
-
-  ///下载
-  Future download() {
-    var queryParameters = {
-      'path': Uri.encodeFull(filePath),
-    };
-    Uri uri = Uri.http(getHost(), '$PATH/download', queryParameters);
-    html.AnchorElement anchorElement =
-        new html.AnchorElement(href: uri.toString());
-    anchorElement.download = uri.toString();
-    anchorElement.click();
-    return Future.value();
-  }
-
-  ///删除
-  Future delete() async {
-    Uri uri = Uri.http(getHost(), '$PATH/delete');
-    var response = await httpPost(uri, body: {
-      'path': filePath,
-    });
-    if (response.statusCode == 200) {
-      _deleted = true;
-      return Future.value();
-    } else {
-      return Future.error(
-          ErrorResult.create('Error', jsonDecode(response.body)));
-    }
-  }
 }

@@ -45,6 +45,7 @@ dependencies:
   #数据库
   sqflite: ^2.0.0+3
   wifi_info_flutter: ^2.0.0
+  photo_manager: ^1.1.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

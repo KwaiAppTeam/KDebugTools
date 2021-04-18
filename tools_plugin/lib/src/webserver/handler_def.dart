@@ -25,7 +25,7 @@ abstract class AbsAppHandler {
     Map<String, Object> headers = Map<String, String>();
     //允许跨域
     headers['Access-Control-Allow-Origin'] = '*';
-    headers['Access-Control-Allow-Headers'] = "Pin, Content-Type";
+    headers['Access-Control-Allow-Headers'] = "Token, Pin, Content-Type";
     headers['Content-Type'] = 'application/json; charset=utf-8';
     return headers;
   }
