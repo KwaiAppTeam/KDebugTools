@@ -74,10 +74,10 @@ class PhotoHandler extends AbsAppHandler {
 
   ///列出相册内容
   Future<Response> _asset(Request request) async {
-    String albumId;
+    String? albumId;
     if (request.url.hasQuery &&
         request.url.queryParameters['albumId']?.isNotEmpty == true) {
-      albumId = Uri.decodeFull(request.url.queryParameters['albumId']);
+      albumId = Uri.decodeFull(request.url.queryParameters['albumId']!);
     }
     Map<String, Object> data = Map<String, Object>();
     List<Asset> assets = <Asset>[];
@@ -105,15 +105,15 @@ class PhotoHandler extends AbsAppHandler {
 
   ///缩略图
   Future<Response> _thumb(Request request) async {
-    String assetId;
+    String? assetId;
     if (request.url.hasQuery &&
         request.url.queryParameters['assetId']?.isNotEmpty == true) {
-      assetId = Uri.decodeFull(request.url.queryParameters['assetId']);
+      assetId = Uri.decodeFull(request.url.queryParameters['assetId']!);
     }
     if (assetId == null) {
       return notFound();
     }
-    AssetEntity asset = await AssetEntity.fromId(assetId);
+    AssetEntity? asset = await AssetEntity.fromId(assetId);
     if (asset == null) {
       return notFound();
     }
@@ -127,7 +127,7 @@ class PhotoHandler extends AbsAppHandler {
       return new Response.notModified();
     }
     //缩略图数据
-    Uint8List thumb = await asset.thumbDataWithSize(128, 128, quality: 50);
+    Uint8List? thumb = await asset.thumbDataWithSize(128, 128, quality: 50);
     if (thumb == null) {
       return notFound();
     }
@@ -147,22 +147,22 @@ class PhotoHandler extends AbsAppHandler {
 
   ///读取原文件
   Future<Response> _read(Request request) async {
-    String assetId;
+    String? assetId;
     if (request.url.hasQuery &&
         request.url.queryParameters['assetId']?.isNotEmpty == true) {
-      assetId = Uri.decodeFull(request.url.queryParameters['assetId']);
+      assetId = Uri.decodeFull(request.url.queryParameters['assetId']!);
     }
     if (assetId == null) {
       return notFound();
     }
-    AssetEntity asset = await AssetEntity.fromId(assetId);
+    AssetEntity? asset = await AssetEntity.fromId(assetId);
     if (asset == null) {
       return notFound();
     }
 
-    File file = await asset.originFile;
+    File? file = await asset.originFile;
     //todo remove cache in ios
-    return createStaticFileHandler(file.path,
+    return createStaticFileHandler(file!.path,
         useHeaderBytesForContentType: true)(request);
   }
 
@@ -170,7 +170,7 @@ class PhotoHandler extends AbsAppHandler {
   Future<Response> _delete(Request request) async {
     Map body = jsonDecode(await request.readAsString());
     //assetIds
-    List<String> assetIds = (body['assetIds'] as List<dynamic>)?.cast<String>();
+    List<String> assetIds = (body['assetIds'] as List<dynamic>).cast<String>();
     List<String> deletedIds = await PhotoManager.editor.deleteWithIds(assetIds);
     Map<String, Object> data = Map<String, Object>();
     data['deletedIds'] = deletedIds;
@@ -181,23 +181,23 @@ class PhotoHandler extends AbsAppHandler {
   Future<Response> _upload(Request request) async {
     Completer<Response> completer = Completer();
     try {
-      ContentType ct = ContentType.parse(request.headers['content-type']);
-      String boundary = ct.parameters['boundary'];
+      ContentType ct = ContentType.parse(request.headers['content-type']!);
+      String boundary = ct.parameters['boundary']!;
       final String tempDir = (await getTemporaryDirectory()).path;
       request
           .read()
           .transform(MimeMultipartTransformer(boundary))
           .map(HttpMultipartFormData.parse)
           .map((HttpMultipartFormData formData) {
-        String name = formData.contentDisposition.parameters['name'];
+        String? name = formData.contentDisposition.parameters['name'];
         if (name == 'file') {
-          String filename = formData.contentDisposition.parameters['filename'];
+          String? filename = formData.contentDisposition.parameters['filename'];
           String destFile = '$tempDir/$filename';
           //找到一个不存在的文件名
           while (FileSystemEntity.typeSync(destFile) !=
               FileSystemEntityType.notFound) {
             //rename new file
-            int dotIndex = filename.indexOf('.');
+            int dotIndex = filename!.indexOf('.');
             //a.png -> a-1.png;  fileA -> fileA-1
             if (dotIndex > 0) {
               filename = filename.substring(0, dotIndex) +
@@ -223,7 +223,7 @@ class PhotoHandler extends AbsAppHandler {
             });
           });
         }
-      }).listen((event) {});
+      }).listen((event) {} as void Function(Null)?);
     } catch (e) {
       debugPrint('upload failed, $e');
       completer.complete(error('$e'));
@@ -235,10 +235,10 @@ class PhotoHandler extends AbsAppHandler {
   Future<Response> _download(Request request) async {
     if (request.url.hasQuery &&
         request.url.queryParameters['assetIds']?.isNotEmpty == true) {
-      String idStr = Uri.decodeFull(request.url.queryParameters['assetIds']);
+      String idStr = Uri.decodeFull(request.url.queryParameters['assetIds']!);
       List<String> assetIds = idStr.split(',');
-      File file;
-      String name;
+      File? file;
+      late String name;
       //do zip
       if (assetIds.length > 1) {
         try {
@@ -250,8 +250,8 @@ class PhotoHandler extends AbsAppHandler {
           var encoder = ZipFileEncoder();
           encoder.create(file.path);
           for (String id in assetIds) {
-            AssetEntity assetEntity = await AssetEntity.fromId(id);
-            File assetFile = await assetEntity.originFile;
+            AssetEntity? assetEntity = await AssetEntity.fromId(id);
+            File? assetFile = await assetEntity?.originFile;
             if (assetFile != null) {
               encoder.addFile(assetFile);
             }
@@ -261,9 +261,9 @@ class PhotoHandler extends AbsAppHandler {
           return error('$e');
         }
       } else if (assetIds.isNotEmpty) {
-        AssetEntity assetEntity = await AssetEntity.fromId(assetIds[0]);
-        file = await assetEntity.originFile;
-        name = file.path.substring(1 + file.path.lastIndexOf('/'));
+        AssetEntity? assetEntity = await AssetEntity.fromId(assetIds[0]);
+        file = await assetEntity!.originFile;
+        name = file!.path.substring(1 + file.path.lastIndexOf('/'));
       }
       if (file == null || !file.existsSync()) {
         return notFound();

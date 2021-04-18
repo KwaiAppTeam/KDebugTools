@@ -20,10 +20,10 @@ class Album {
     this.albumType,
   });
 
-  String id;
-  String name;
-  int assetCount;
-  int albumType;
+  String? id;
+  String? name;
+  int? assetCount;
+  int? albumType;
 
   factory Album.fromJson(Map<String, dynamic> json) => Album(
         id: json["id"],
@@ -52,13 +52,13 @@ class Asset {
     this.createTs,
   });
 
-  String id;
-  String title;
-  int type;
-  int duration;
-  int width;
-  int height;
-  int createTs;
+  String? id;
+  String? title;
+  int? type;
+  int? duration;
+  int? width;
+  int? height;
+  int? createTs;
 
   factory Asset.fromJson(Map<String, dynamic> json) => Asset(
     id: json["id"],
