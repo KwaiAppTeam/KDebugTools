@@ -117,3 +117,9 @@ Debugger.instance.registerDbFile(String filePath);
 参考[example代码](../tools_plugin/example/lib/main.dart)
 
 
+## 支持相册管理功能
+
+若应用未申请权限则需要进行申请
+
+
+参考[PhotoManager](https://pub.dev/packages/photo_manager#ios-config)

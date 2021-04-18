@@ -27,11 +27,11 @@ const tooltipWait = Duration(milliseconds: 500);
 const tooltipWaitLong = Duration(milliseconds: 1000);
 
 ///显示菜单
-Future<int> showActionMenu({
-  @required BuildContext context,
-  @required GlobalKey iconKey,
-  @required List<Widget> items,
-}) {
+Future<int> showActionMenu(
+    {@required BuildContext context,
+    @required GlobalKey iconKey,
+    @required List<Widget> items,
+    bool enable = true}) {
   final RenderBox renderBox = iconKey.currentContext.findRenderObject();
   final offset = renderBox.localToGlobal(Offset.zero);
   return showMenu(
@@ -41,11 +41,32 @@ Future<int> showActionMenu({
       items: items
           .map((e) => PopupMenuItem<int>(
                 value: items.indexOf(e),
+                enabled: enable,
                 height: 30,
                 textStyle: Theme.of(context)
                     .textTheme
                     .bodyText2
                     .copyWith(fontSize: 12),
+                child: e,
+              ))
+          .toList());
+}
+
+Future<int> showCheckedMenu(
+    {@required BuildContext context,
+    @required GlobalKey iconKey,
+    @required List<Widget> items,
+    List<int> checkIndex}) {
+  final RenderBox renderBox = iconKey.currentContext.findRenderObject();
+  final offset = renderBox.localToGlobal(Offset.zero);
+  return showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+          offset.dx, offset.dy + renderBox.size.height, offset.dx, 0),
+      items: items
+          .map((e) => CheckedPopupMenuItem<int>(
+                value: items.indexOf(e),
+                checked: checkIndex?.contains(items.indexOf(e)),
                 child: e,
               ))
           .toList());
@@ -72,14 +93,13 @@ class ActionIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    Color barBg = actionBarBackgroundColor(theme);
     final button = SizedBox(
       height: 24,
       width: 24,
       child: TextButton(
         onPressed: (enable && onTap != null) ? onTap : null,
         style: TextButton.styleFrom(
-            backgroundColor: checked ? barBg.darken(0.2) : Colors.transparent),
+            backgroundColor: checked ? theme.focusColor : Colors.transparent),
         child: Icon(
           iconData,
           color: customColor,

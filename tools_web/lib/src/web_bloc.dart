@@ -31,10 +31,11 @@ class WebBloc extends BlocBase {
   //root nav下方的应用区域
   final GlobalKey<OverlayState> appAreaOverlay = GlobalKey<OverlayState>();
 
-  AppItem _focusedApp;
+  List<AppItem> _appStack = <AppItem>[];
+
   final BuildContext context;
 
-  AppItem get focusedItem => _focusedApp;
+  AppItem get focusedItem => _appStack.last;
 
   Map<AppItem, AppWindowBloc> get openedApps => _appBlocs;
 
@@ -146,7 +147,7 @@ class WebBloc extends BlocBase {
       },
     );
     debugPrint('App created: ${appItem.name}');
-    _focusedApp = appItem;
+    _appStack.add(appItem);
     analytics.setCurrentScreen(screenName: appItem.name);
 
     appAreaOverlay.currentState.insert(_overlayEntry);
@@ -157,13 +158,15 @@ class WebBloc extends BlocBase {
 
   ///将窗口拉到最前面
   void _applyFocusedState(AppItem newItem) {
-    if (newItem != _focusedApp || _appBlocs[newItem].isMinimize) {
+    AppItem focusedApp = _appStack.last;
+    if (newItem != focusedApp || _appBlocs[newItem].isMinimize) {
       debugPrint('App focused: ${newItem.name}');
       _appBlocs[newItem].isMinimize = false;
-      _focusedApp = newItem;
-      analytics.setCurrentScreen(screenName: _focusedApp.name);
+      analytics.setCurrentScreen(screenName: newItem.name);
 
       //拉到最前面
+      _appStack.remove(newItem);
+      _appStack.add(newItem);
       _appWindows[newItem].remove();
       appAreaOverlay.currentState.insert(_appWindows[newItem]);
       setState(() {});
@@ -178,6 +181,7 @@ class WebBloc extends BlocBase {
     _appWindows.remove(appItem);
     _appBlocs[appItem]?.dispose();
     _appBlocs.remove(appItem);
+    _appStack.remove(appItem);
     setState(() {});
   }
 

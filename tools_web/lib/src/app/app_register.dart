@@ -21,6 +21,7 @@ import 'package:k_debug_tools_web/src/app/fileexplorer/file_explorer.dart';
 import 'package:k_debug_tools_web/src/app/httphook/http_hook_window.dart';
 import 'package:k_debug_tools_web/src/app/logwatcher/log_watcher.dart';
 import 'package:k_debug_tools_web/src/app/pagenavigator/page_navigator.dart';
+import 'package:k_debug_tools_web/src/app/photomanager/photo_manager.dart';
 import 'package:k_debug_tools_web/src/app/screenrecorder/screen_recorder.dart';
 import 'package:k_debug_tools_web/src/app/sharedpreferences/shared_preferences.dart';
 import 'package:k_debug_tools_web/src/app/uicheck/uicheck.dart';
@@ -103,7 +104,13 @@ class AppRegister {
         contentBuilder: (ctx) {
           return FileExplorerWindow();
         }));
-
+    _deskTopItems.add(AppItem(
+        name: AppLocalizations.of(ctx).photoManager,
+        icon: Icons.photo_library_rounded,
+        defaultSize: Size(960, 720),
+        contentBuilder: (ctx) {
+          return PhotoManagerWindow();
+        }));
     _deskTopItems.add(AppItem(
         name: 'SharedPreferences',
         icon: Icons.view_list,
@@ -141,7 +148,7 @@ class AppRegister {
 
     _deskTopItems.add(AppItem(
         name: AppLocalizations.of(ctx).flutterWidgets,
-        icon: Icons.image,
+        icon: Icons.view_quilt_rounded,
         defaultSize: Size(960, 720),
         contentBuilder: (ctx) {
           return UICheckWindow();

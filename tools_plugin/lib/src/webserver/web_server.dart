@@ -39,6 +39,7 @@ import 'handlers/clip_board_handler.dart';
 import 'handlers/file_handler.dart';
 import 'handlers/httphook_handler.dart';
 import 'handlers/logwatcher_handler.dart';
+import 'handlers/photo_handler.dart';
 import 'handlers/screen_recorder_handler.dart';
 import 'handlers/sp_handler.dart';
 
@@ -193,6 +194,7 @@ class WebServer {
     //api
     router.mount('/api/sp/', SharedPreferencesHandler().router);
     router.mount('/api/file/', FileHandler().router);
+    router.mount('/api/photo/', PhotoHandler().router);
     router.mount('/api/app/', AppInfoHandler().router);
     router.mount('/api/device/', DeviceInfoHandler().router);
     router.mount('/api/httphook/', HttpHookHandler().router);

@@ -7,6 +7,7 @@
     },
     "clipboard": "设备剪切板",
     "fileExplorer": "文件管理",
+    "photoManager": "照片管理",
     "httpRequest": "网络请求",
     "logViewer": "日志查看",
     "dbViewer": "数据库管理",
@@ -67,6 +68,16 @@
         "placeholders": {
             "error": {}
         }
-    }
-
+    },
+    "preview": "预览",
+    "title": "标题",
+    "wxh": "宽高",
+    "duration": "时长",
+    "createTime": "创建时间",
+    "sort": "排序",
+    "switchView": "切换视图",
+    "viewInfo": "查看信息",
+    "deleteCurrent": "删除当前文件",
+    "copyLink": "复制链接",
+    "copied": "已复制"
 }

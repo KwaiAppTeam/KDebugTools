@@ -52,6 +52,20 @@ class ItemPicker<T> extends ChangeNotifier {
     notifyListeners();
   }
 
+  void select(T item) {
+    if (!_selectedItem.contains(item)) {
+      _selectedItem.add(item);
+      notifyListeners();
+    }
+  }
+
+  void deselect(T item) {
+    if (_selectedItem.contains(item)) {
+      _selectedItem.remove(item);
+      notifyListeners();
+    }
+  }
+
   //select/deselect
   void onItemTap(T item, {bool forceSelect = false}) {
     bool multiSelect = _webBloc?.isMetaPressed ?? false;
