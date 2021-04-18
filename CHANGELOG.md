@@ -1,3 +1,6 @@
+## 1.0.3
+* feature: PhotoManager
+
 ## 1.0.2
 * localization.
 
